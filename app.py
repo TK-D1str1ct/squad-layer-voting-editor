@@ -273,18 +273,6 @@ def layer_page():
         on_change=lambda: st.session_state.__setitem__("page_saved", False)
     )
 
-    # --- Update session state (optional) ---
-    #st.session_state.df.update(edited_df)
-
-# --- ABOVE = NEW | BELOW = OLD --- #
-
-    # config = {
-    #     0: st.column_config.Column(disabled = True),
-    #     'Exclude': st.column_config.Column(pinned = True)
-    # }
-
-    # edited_df = st.data_editor(st.session_state.df, column_config=config, key = 'editor', on_change= lambda: st.session_state.__setitem__("page_saved", False))
-
     build_bottom_nav(st.Page(map_page), st.Page(download_page), df=edited_df)
 
 def download_page():
@@ -309,12 +297,6 @@ def download_page():
 
         with col2:
             st.code(cache, language=None)
-            # st.text_area(
-            #     "Copy/Paste Config",
-            #     value=cache,
-            #     height=300,
-            #     label_visibility="collapsed"  # hides the label, keeps only box
-            # )
 
     build_bottom_nav(st.Page(layer_page), middle_bool=False)
 
@@ -328,4 +310,5 @@ pg = st.navigation(
         st.Page(download_page, title='Download Config')
     ], position='sidebar')
     
+st.set_page_config(layout='wide')
 pg.run()

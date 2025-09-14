@@ -93,6 +93,13 @@ def LFUT_to_table(active_LFUT_df:pd.DataFrame, filter=None):
     table_team1 = match_exclusions(active_LFUT_df, 1, filter)
     table_team2 = match_exclusions(active_LFUT_df, 2, filter)
 
+    table_team1 = (
+        table_team1.replace({None: " "}).infer_objects(copy=False)
+    )
+    table_team2 = (
+        table_team2.replace({None: " "}).infer_objects(copy=False)
+    )
+
     return table_team1, table_team2
 
 # --- Table functions (Table -> LFUT) --- #

@@ -92,13 +92,12 @@ def get_config_settings(layer_settings:pd.Series, team_config_settings:list, tea
 # %%
 # --- Import cfg file --- #
 
-def upload_as_csv(cfg_file):
+def upload_cfg_to_df(cfg_file):
 
     missing_layers = []
     LFUT_empty_df = pd.read_csv('LFUT.csv', index_col=0)
 
-    with open(cfg_file) as f:
-        settings_list = [line.strip() for line in f if line.strip()]
+    settings_list = [line.decode("utf-8").strip() for line in cfg_file if line.strip()]
     
     LFUT_import_df = LFUT_empty_df.apply(apply_config_settings, axis=1, args=(config_to_dict(settings_list),missing_layers,))
 

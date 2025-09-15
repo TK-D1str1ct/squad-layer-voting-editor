@@ -3,7 +3,7 @@ name: Update LFUT CSV
 on:
   schedule:
     - cron: "0 6 * * *"   # daily at 6 AM UTC
-  workflow_dispatch:       # manual trigger
+  workflow_dispatch:       # allow manual trigger
 
 jobs:
   update-lfut:
@@ -13,25 +13,23 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      # 2️⃣ Download latest JSON from source repo
-      - name: Download latest JSON
+      # 2️⃣ Download latest JSON from the original repo
+      - name: Download upstream JSON
         run: |
-          curl -L https://raw.githubusercontent.com/fantinodavide/SquadLayerList/main/layers.json -o data/source.json
+          curl -L https://raw.githubusercontent.com/fantinodavide/SquadLayerList/main/layers.json -o layers_upstream.json
 
-      # 3️⃣ Check if JSON changed
-      - name: Check for changes
-        id: check_changes
+      # 3️⃣ Check if JSON changed compared to local
+      - name: Compare JSON files
+        id: check_json
         run: |
-          git fetch origin main
-          git add data/source.json
-          if git diff --cached --quiet; then
+          if cmp -s layers_upstream.json layers.json; then
             echo "json_changed=false" >> $GITHUB_ENV
           else
             echo "json_changed=true" >> $GITHUB_ENV
-          fi
+            cp layers_upstream.json layers.json
 
       # 4️⃣ Exit early if JSON did not change
-      - name: Skip if no changes
+      - name: Skip if no JSON changes
         if: env.json_changed == 'false'
         run: echo "No changes detected in JSON. Exiting workflow."
 
@@ -48,18 +46,21 @@ jobs:
         run: |
           pip install pandas jupyter nbconvert nbformat
 
-      # 7️⃣ Run notebook to generate CSV
+      # 7️⃣ Run notebook to generate LFUT.csv
       - name: Run notebook
         if: env.json_changed == 'true'
         run: |
-          jupyter nbconvert --to notebook --execute scripts/LFUT_from_json.ipynb --output scripts/LFUT_from_json.ipynb
+          jupyter nbconvert --to notebook --execute LFUT_from_csv.ipynb --output LFUT_from_csv.ipynb
 
-      # 8️⃣ Commit and push updated CSV
-      - name: Commit updated CSV
+      # 8️⃣ Commit and push updated CSV if it changed
+      - name: Commit updated CSV if changed
         if: env.json_changed == 'true'
         run: |
-          git config user.name "github-actions"
-          git config user.email "github-actions@github.com"
-          git add data/LFUT.csv
-          git commit -m "Update LFUT.csv from source JSON" || echo "No changes"
-          git push
+          git add LFUT.csv layers.json
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            git config user.name "github-actions"
+            git config user.email "github-actions@github.com"
+            git commit -m "Update layers.json and LFUT.csv from upstream"
+            git push

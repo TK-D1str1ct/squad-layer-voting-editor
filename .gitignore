@@ -184,10 +184,7 @@ cython_debug/
 # Personal ignore files
 *.cfg
 *.txt
-Import_Config_Settings.ipynb
-Export_Config_Settings.ipynb
-FUT_Utils.ipynb
-LFUT_from_csv.ipynb
+*.ipynb
 Available_Layers.csv
 LFUT_OUTDATED.csv
 LFUT_Settings.csv

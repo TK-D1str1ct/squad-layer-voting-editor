@@ -3,7 +3,7 @@ name: Update LFUT CSV
 on:
   schedule:
     - cron: "0 6 * * *"   # daily at 6 AM UTC
-  workflow_dispatch:       # allow manual trigger
+  workflow_dispatch:       # manual trigger
 
 jobs:
   update-lfut:
@@ -18,7 +18,7 @@ jobs:
         run: |
           curl -L https://raw.githubusercontent.com/fantinodavide/SquadLayerList/main/layers.json -o layers_upstream.json
 
-      # 3️⃣ Check if JSON changed compared to local
+      # 3️⃣ Compare JSON files
       - name: Compare JSON files
         id: check_json
         run: |
@@ -45,19 +45,19 @@ jobs:
       - name: Install dependencies
         if: env.json_changed == 'true'
         run: |
-          pip install pandas jupyter nbconvert nbformat
+          pip install pandas
 
-      # 7️⃣ Run notebook to generate LFUT.csv
-      - name: Run notebook
+      # 7️⃣ Run Python script to generate LFUT.csv
+      - name: Run script
         if: env.json_changed == 'true'
         run: |
-          jupyter nbconvert --to notebook --execute LFUT_from_json.ipynb --output LFUT_from_json.ipynb
+          python LFUT_from_json.py
 
-      # 8️⃣ Commit and push updated CSV if it changed
+      # 8️⃣ Commit updated CSV and JSON if changed
       - name: Commit updated CSV if changed
         if: env.json_changed == 'true'
         run: |
-          git add LFUT.csv layers.json
+          git add layers.json LFUT.csv
           if git diff --cached --quiet; then
             echo "No changes to commit."
           else
@@ -65,4 +65,3 @@ jobs:
             git config user.email "github-actions@github.com"
             git commit -m "Update layers.json and LFUT.csv from upstream"
             git push
-          fi

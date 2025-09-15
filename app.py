@@ -5,14 +5,15 @@ import FUT_Utils as futu
 import Export_Config_Settings as ecs
 import Import_Config_Settings as ics
 
-## initialization 
+pd.set_option('future.no_silent_downcasting', True)
 
-#faction_colors_df = pd.read_csv("faction_colors.csv") #TODO apply column colors based on faction (cant do it with st.dataframe?) --> can't be done with st.data_editor
+## initialization 
 
 empty_LFUT_df = pd.read_csv('LFUT.csv', index_col=0)
 
 if 'df' not in st.session_state:
     st.session_state.df = empty_LFUT_df
+
 if 'page_saved' not in st.session_state:
     st.session_state.page_saved = True
 
@@ -60,7 +61,7 @@ def build_bottom_nav(prev_page: st.Page = None, next_page: st.Page = None, middl
             st.session_state.back_state_time = time.time()
         if st.session_state.back_state:
             if not st.session_state.page_saved: 
-                st.warning("You have unsaved changes!")
+                st.warning("You may have unsaved changes!")
                 if st.button("Discard changes", key="back_anyways"):
                     st.session_state.back_state = False
                     st.session_state.page_saved = True
@@ -97,7 +98,7 @@ def build_bottom_nav(prev_page: st.Page = None, next_page: st.Page = None, middl
                 st.session_state.next_state_time = time.time()
             if st.session_state.next_state:
                 if not st.session_state.page_saved: 
-                    st.warning("You have unsaved changes!")
+                    st.warning("You may have unsaved changes!")
                     if st.button("Discard changes", key="next_anyways"):
                         st.session_state.next_state = False
                         st.session_state.page_saved = True
@@ -139,12 +140,14 @@ def apply_filters(df, filter_input, filter_mode, axis="rows"):
 def state_maping(df:pd.DataFrame, state_map:dict):
 
     df = df.replace(state_map)
+    df = df.infer_objects(copy=False)
 
     return df
 
 def reverse_state_maping(df:pd.DataFrame, reverse_state_map:dict):
 
     df = df.replace(reverse_state_map)
+    df = df.infer_objects(copy=False)
 
     return df
 
@@ -159,6 +162,9 @@ def select_box_FU(df:pd.DataFrame, state_map:dict):
 
     return column_config
 
+
+### --- Building Website --- ###
+
 def home_page():
     st.title('Home')
 
@@ -170,12 +176,26 @@ def home_page():
 
 def global_page():
 
-    st.title("Global Exclusion Settings")
-    "Exclude Factions, Units or specific combinations from all layers."
-    st.markdown(f'''{State_map[True]}: This Faction-Unit combination is :blue-background[excluded] as a voting option on **all layers** for this team.  
-    {State_map[False]}: This Faction-Unit combination is :blue-background[included] as a voting option on **all layers** for this team.  
-    {State_map["Mixed"]}: This Faciton-Unit combination is :blue-background[excluded] as a voting option on **at least one layer** for this team.''',
-    help=f"Selecting or saving changes with the '{State_map["Mixed"]}' selected will have no effect on the specific Faction-Unit combination")
+    st.title("🌍 Global Exclusion Settings")
+    st.markdown(
+        """
+        Exclude **Factions**, **Units**, or specific combinations across **all layers**.
+        """
+    )
+    with st.expander("ℹ️ How global exclusions work"):
+        st.markdown(
+            f"""
+            - {State_map[True]} → **Excluded**  
+            This Faction–Unit combination is :blue-background[not available] as a voting option on *any* layer for this team.  
+
+            - {State_map[False]} → **Included**  
+            This Faction–Unit combination is :blue-background[available] as a voting option on *all* layers for this team.  
+
+            - {State_map["Mixed"]} → **Mixed**  
+            This Faction–Unit combination is :blue-background[excluded] on *at least one layer*, but not on all.  
+            *(Selecting or saving changes with "Mixed" selected will have no effect for the specific Faction-Unit combination.)*
+            """
+        )
 
     team1_df, team2_df = futu.LFUT_to_table(st.session_state.df)
 
@@ -189,14 +209,29 @@ def global_page():
 
 def gamemode_page():
 
-    st.title("Gamemode Exclusion Settings")
-    "Exclude Factions, Units or specific combinations from layers with the selected Gamemode."
-    st.selectbox("Choose a Gamemode filter:", Gamemodes, key="gamemode_filter")
-    
-    st.markdown(f'''{State_map[True]}: This Faction-Unit combination is :blue-background[excluded] as a voting option on **all {st.session_state.gamemode_filter}** layers for this team.  
-    {State_map[False]}: This Faction-Unit combination is :blue-background[included] as a voting option on **all {st.session_state.gamemode_filter}** layers for this team.  
-    {State_map["Mixed"]}: This Faciton-Unit combination is :blue-background[excluded] as a voting option on **at least one {st.session_state.gamemode_filter}** layer for this team.''',
-    help=f"Selecting or saving changes with the '{State_map["Mixed"]}' selected will have no effect on the specific Faction-Unit combination")
+    st.title("🎮 Gamemode Exclusion Settings")
+    st.write("Exclude Factions, Units, or specific combinations from layers with the selected Gamemode.")
+
+    # Gamemode selector
+    selected_gamemode = st.selectbox("Choose a Gamemode filter:", Gamemodes, key="gamemode_filter")
+
+    # Explanation in collapsible box
+    with st.expander("ℹ️ How gamemode exclusions work"):
+        st.markdown(
+            f"""
+            The symbols indicate the current exclusion state for **{selected_gamemode}** layers:
+
+            - {State_map[True]} → **Excluded**  
+            This Faction–Unit combination is :blue-background[not available] as a voting option on *any* **{selected_gamemode}** layer for this team.  
+
+            - {State_map[False]} → **Included**  
+            This Faction–Unit combination is :blue-background[available] as a voting option on *all* **{selected_gamemode}** layers for this team.  
+
+            - {State_map["Mixed"]} → **Mixed**  
+            This Faction–Unit combination is :blue-background[excluded] on *at least one* **{selected_gamemode}** layer, but not on all.  
+            *(Selecting or saving changes with "Mixed" selected will have no effect for the specific Faction-Unit combination.)*
+            """
+        )
 
     team1_df, team2_df = futu.LFUT_to_table(st.session_state.df, filter=st.session_state.gamemode_filter)
 
@@ -210,15 +245,27 @@ def gamemode_page():
 
 def map_page():
     
-    st.title("Map Exclusion Settings")
-    "Exclude Factions, Units or specific combinations from layers with the selected Map."
-    st.selectbox("Choose a Map filter:", Maps, key="map_filter")
-    
-    st.markdown(f'''{State_map[True]}: This Faction-Unit combination is :blue-background[excluded] as a voting option on **all {st.session_state.map_filter}** layers for this team.  
-    {State_map[False]}: This Faction-Unit combination is :blue-background[included] as a voting option on **all {st.session_state.map_filter}** layers for this team.  
-    {State_map["Mixed"]}: This Faciton-Unit combination is :blue-background[excluded] as a voting option on **at least one {st.session_state.map_filter}** layer for this team.''',
-    help=f"Selecting or saving changes with the '{State_map["Mixed"]}' selected will have no effect on the specific Faction-Unit combination")
+    st.title("🗺️ Map Exclusion Settings")
+    st.write("Exclude Factions, Units, or specific combinations from layers with the selected Map.")
 
+    selected_map = st.selectbox("Choose a Map filter:", Maps, key="map_filter")
+
+    with st.expander(f"ℹ️ How map exclusions work"):
+        st.markdown(
+            f"""
+            The symbols indicate the exclusion state for **{selected_map}** layers:
+
+            - {State_map[True]} → **Excluded**  
+            This Faction–Unit combination is :blue-background[not available] as a voting option on **all {selected_map}** layers for this team.  
+
+            - {State_map[False]} → **Included**  
+            This Faction–Unit combination is :blue-background[available] as a voting option on **all {selected_map}** layers for this team.  
+
+            - {State_map["Mixed"]} → **Mixed**  
+            This Faction–Unit combination is :blue-background[excluded] on *at least one* **{selected_map}** layer, but not on all.  
+            *(Selecting or saving changes with "Mixed" selected will have no effect for the specific Faction-Unit combination.)*
+            """
+        )
 
     team1_df, team2_df = futu.LFUT_to_table(st.session_state.df, filter=st.session_state.map_filter)
 
@@ -233,25 +280,52 @@ def map_page():
 
 def layer_page():
     on_page_load()
-    st.title("Layer exclusion settings")
 
+    st.title("📑 Layer Exclusion Settings")
+    st.write("Exclude specific Faction–Unit–Team combinations from individual layers.")
 
+    st.container()
+    with st.container(border=True):
+        st.markdown("### 🔎 Filters")
+        with st.expander("ℹ️ How filtering works"):
+            st.markdown(
+                """
+                Use filters to narrow down the table below by **Layers** and/or **Faction-Unit** combinations.  
+                You can enter **multiple search keys**, separated by commas.  
 
-    # # --- Filter UI ---
-    # st.subheader("Row / Column Filters")
+                **Examples:**
+                - **Layer Filter** → `AlBasrah, BlackCoast` with **Mode = OR**  
+                → Shows only layers from the maps *AlBasrah* **or** *BlackCoast*.  
 
-    filter_container = st.container()
-    row_filter , column_filter = filter_container.columns(2)
+                - **Faction/Unit Filter** → `BAF, 2` with **Mode = AND**  
+                → Shows only columns matching *BAF* **and** *team 2*.  
+                """
+            )
+        row_filter, column_filter = st.columns(2)
 
-    with row_filter:
-        with st.container(border=True):
-            row_filter_input = st.text_input("Layer filter (comma-separated)")
-            row_filter_mode = st.radio("Layer filter mode", ["OR", "AND"], horizontal=True)
+        with row_filter:
+            with st.container(border=True):
+                row_filter_input = st.text_input("Layer filter (comma-separated)")
+                row_filter_mode = st.radio("Layer filter mode", ["OR", "AND"], horizontal=True)
 
-    with column_filter:
-        with st.container(border=True):
-            col_filter_input = st.text_input("Faction/Unit filter (comma-separated)")
-            col_filter_mode = st.radio("Faction/Unit filter mode", ["OR", "AND"], horizontal=True)
+        with column_filter:
+            with st.container(border=True):
+                col_filter_input = st.text_input("Faction/Unit filter (comma-separated)")
+                col_filter_mode = st.radio("Faction/Unit filter mode", ["OR", "AND"], horizontal=True)
+
+    with st.expander("ℹ️ How layer exclusions work"):
+        st.markdown(
+            """
+            Each cell in the table represents a **Faction–Unit–Team** combination for a given **Layer**.  
+            The checkboxes determine whether that combination is available for voting:
+
+            <input type="checkbox" disabled checked> → **Excluded**  
+              This Faction–Unit–Team combination is :blue-background[not available] as a voting option for the specific layer.  
+            <input type="checkbox" disabled> → **Included**  
+              This Faction–Unit–Team combination is :blue-background[available] as a voting option for the specific layer.  
+            """,
+            unsafe_allow_html=True
+        )
 
     # --- Apply filters ---
     df_filtered = apply_filters(st.session_state.df.copy(), row_filter_input, row_filter_mode, axis="rows")

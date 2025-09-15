@@ -1,0 +1,65 @@
+name: Update LFUT CSV
+
+on:
+  schedule:
+    - cron: "0 6 * * *"   # daily at 6 AM UTC
+  workflow_dispatch:       # manual trigger
+
+jobs:
+  update-lfut:
+    runs-on: ubuntu-latest
+    steps:
+      # 1️⃣ Checkout your repo
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      # 2️⃣ Download latest JSON from source repo
+      - name: Download latest JSON
+        run: |
+          curl -L https://raw.githubusercontent.com/fantinodavide/SquadLayerList/main/layers.json -o data/source.json
+
+      # 3️⃣ Check if JSON changed
+      - name: Check for changes
+        id: check_changes
+        run: |
+          git fetch origin main
+          git add data/source.json
+          if git diff --cached --quiet; then
+            echo "json_changed=false" >> $GITHUB_ENV
+          else
+            echo "json_changed=true" >> $GITHUB_ENV
+          fi
+
+      # 4️⃣ Exit early if JSON did not change
+      - name: Skip if no changes
+        if: env.json_changed == 'false'
+        run: echo "No changes detected in JSON. Exiting workflow."
+
+      # 5️⃣ Set up Python
+      - name: Set up Python
+        if: env.json_changed == 'true'
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      # 6️⃣ Install dependencies
+      - name: Install dependencies
+        if: env.json_changed == 'true'
+        run: |
+          pip install pandas jupyter nbconvert nbformat
+
+      # 7️⃣ Run notebook to generate CSV
+      - name: Run notebook
+        if: env.json_changed == 'true'
+        run: |
+          jupyter nbconvert --to notebook --execute scripts/LFUT_from_json.ipynb --output scripts/LFUT_from_json.ipynb
+
+      # 8️⃣ Commit and push updated CSV
+      - name: Commit updated CSV
+        if: env.json_changed == 'true'
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add data/LFUT.csv
+          git commit -m "Update LFUT.csv from source JSON" || echo "No changes"
+          git push

@@ -27,6 +27,7 @@ jobs:
           else
             echo "json_changed=true" >> $GITHUB_ENV
             cp layers_upstream.json layers.json
+          fi
 
       # 4️⃣ Exit early if JSON did not change
       - name: Skip if no JSON changes
@@ -64,3 +65,4 @@ jobs:
             git config user.email "github-actions@github.com"
             git commit -m "Update layers.json and LFUT.csv from upstream"
             git push
+          fi

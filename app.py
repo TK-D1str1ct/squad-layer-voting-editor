@@ -233,7 +233,6 @@ def home_page():
         """
         - The main data frame `LFUT.csv` used by this tool is **generated from a JSON file** provided by [Contributor Name / GitHub Link](#).  
         - This JSON contains all the layer, faction, and unit data.  
-        - I have made some adjustments manually for this tool. *(Replace with your exact explanation and link.)*
         """
     )
 
@@ -255,8 +254,8 @@ def home_page():
     st.subheader("Import settings:")
 
     st.radio("Exclude missing layers?", ["Yes", "No"], index=0, horizontal=True, help="Whether to pre-set a layer as excluded if it is not found in your config settings.", key="missing_layers_exclude") #TODO
-    #st.radio("Keep obsolete settings?", ["Yes", "No"], index=1, horizontal=True, help="Whether to keep settings that are excluded by default", key="obsolete_settings") #TODO (in future version)
-
+    st.radio("Keep obsolete settings?", ["Yes", "No"], index=1, horizontal=True, help="Whether to keep settings that are excluded by default", key="obsolete_settings") #TODO (in future version)
+    # TODO Mod support (upload personal .json file to get mod specific LFUT)
 
     file_col, paste_col = st.columns(2)
 

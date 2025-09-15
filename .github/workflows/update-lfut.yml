@@ -51,7 +51,7 @@ jobs:
       - name: Run notebook
         if: env.json_changed == 'true'
         run: |
-          jupyter nbconvert --to notebook --execute LFUT_from_csv.ipynb --output LFUT_from_csv.ipynb
+          jupyter nbconvert --to notebook --execute LFUT_from_json.ipynb --output LFUT_from_json.ipynb
 
       # 8️⃣ Commit and push updated CSV if it changed
       - name: Commit updated CSV if changed

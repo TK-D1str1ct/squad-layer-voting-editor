@@ -1,5 +1,8 @@
 name: Update LFUT CSV
 
+permissions:
+  contents: write
+
 on:
   schedule:
     - cron: "0 6 * * *"   # daily at 6 AM UTC
@@ -62,7 +65,7 @@ jobs:
             echo "No changes to commit."
           else
             git config user.name "github-actions"
-            git config user.email "github-actions@github.com"
+            git config user.email "<>"
             git commit -m "Update layers.json and LFUT.csv from upstream"
             git push
           fi

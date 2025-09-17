@@ -3,6 +3,8 @@ import App_Utils as au
 import Export_Config_Settings as ecs
 
 def download_page():
+    #au.on_page_load()
+
     st.title("We are Download")
     st.dataframe(st.session_state.df)
     "some config settings"
@@ -34,4 +36,4 @@ def download_page():
         with col2:
             st.code(cache, language=None)
 
-    build_bottom_nav(st.Page(layer_page), middle_bool=False)
+    au.build_bottom_nav(download_page, middle_bool=False)

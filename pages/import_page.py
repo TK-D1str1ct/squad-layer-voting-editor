@@ -3,8 +3,8 @@ import App_Utils as au
 import Import_Config_Settings as ics
 
 def import_page():
-    
-# --- Side-by-side Upload & Paste ---
+    #au.on_page_load()
+    # --- Side-by-side Upload & Paste ---
     # st.subheader("Import settings:")
 
     # st.radio("Exclude missing layers?", ["Yes", "No"], index=0, horizontal=True, help="Whether to pre-set a layer as excluded if it is not found in your config settings.", key="missing_layers_exclude") #TODO
@@ -18,7 +18,8 @@ def import_page():
         st.subheader("Import from File")
         uploaded_settings = st.file_uploader(
             "Upload your existing LayerVoting file [.cfg, .txt]", 
-            type=["cfg", "txt"]
+            type=["cfg", "txt"],
+            key="file_upload"
         )
         if uploaded_settings is not None:
             try:
@@ -48,4 +49,4 @@ def import_page():
 
     st.divider()
 
-    au.build_bottom_nav(prev_page=st.Page(home_page), next_page=st.Page(global_page))
+    au.build_bottom_nav(import_page)

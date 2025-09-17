@@ -2,7 +2,7 @@ import streamlit as st
 import App_Utils as au
 
 def layer_page():
-    on_page_load()
+    au.on_page_load()
 
     st.title("📑 Layer Exclusion Settings")
     st.write("Exclude specific Faction–Unit–Team combinations from individual layers.")
@@ -55,8 +55,8 @@ def layer_page():
         )
 
     # --- Apply filters ---
-    df_filtered = apply_filters(st.session_state.df.copy(), row_filter_input, row_filter_mode, axis="rows")
-    df_filtered = apply_filters(df_filtered, col_filter_input, col_filter_mode, axis="cols")
+    df_filtered = au.apply_filters(st.session_state.df.copy(), row_filter_input, row_filter_mode, axis="rows")
+    df_filtered = au.apply_filters(df_filtered, col_filter_input, col_filter_mode, axis="cols")
     df_filtered = df_filtered.dropna(axis=1, how="all")
 
     # --- Example column config ---
@@ -74,4 +74,4 @@ def layer_page():
         on_change=lambda: st.session_state.__setitem__("page_saved", False)
     )
 
-    build_bottom_nav(st.Page(map_page), st.Page(download_page), df=edited_df)
+    au.build_bottom_nav(layer_page, df=edited_df)

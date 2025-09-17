@@ -3,7 +3,7 @@ import App_Utils as au
 import Import_Config_Settings as ics
 
 def import_page():
-    #au.on_page_load()
+    au.on_page_load()
     # --- Side-by-side Upload & Paste ---
     # st.subheader("Import settings:")
 
@@ -49,4 +49,4 @@ def import_page():
 
     st.divider()
 
-    au.build_bottom_nav(import_page)
+    au.build_bottom_nav(import_page, middle_bool=False)

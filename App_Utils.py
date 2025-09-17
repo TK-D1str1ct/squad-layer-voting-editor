@@ -13,21 +13,22 @@ import FUT_Utils as futu
 # Empty LFUT df
 empty_LFUT_df = pd.read_csv('LFUT.csv', index_col=0)
 
-if 'df' not in st.session_state:
-    st.session_state.df = empty_LFUT_df
+def init_session():
+    if 'df' not in st.session_state:
+        st.session_state.df = empty_LFUT_df
 
-if 'page_saved' not in st.session_state:
-    st.session_state.page_saved = True
+    if 'page_saved' not in st.session_state:
+        st.session_state.page_saved = True
 
-if 'back_state' not in st.session_state:
-    st.session_state.back_state = False
-    st.session_state.back_state_time = None
-    st.session_state.back_state_TIMEOUT = 10
+    if 'back_state' not in st.session_state:
+        st.session_state.back_state = False
+        st.session_state.back_state_time = None
+        st.session_state.back_state_TIMEOUT = 10
 
-if 'next_state' not in st.session_state:
-    st.session_state.next_state = False
-    st.session_state.next_state_time = None
-    st.session_state.next_state_TIMEOUT = 10
+    if 'next_state' not in st.session_state:
+        st.session_state.next_state = False
+        st.session_state.next_state_time = None
+        st.session_state.next_state_TIMEOUT = 10
 
 # %%
 # --- Define variables --- #
@@ -74,10 +75,8 @@ def build_bottom_nav(current_page_fn, middle_bool: bool = True,
     prev_page_name = prev_page.__name__ if prev_page else None
     next_page_name = next_page.__name__ if next_page else None
 
-    # prev_page_name = "pages/" + prev_page.__name__ if prev_page else None
-    # next_page_name = "pages/" + next_page.__name__ if next_page else None
-
-    print(next_page_name)
+    prev_page_name = "pages/" + prev_page.__name__ + ".py" if prev_page else None
+    next_page_name = "pages/" + next_page.__name__ + ".py" if next_page else None    
 
     # LEFT: Previous page
     with left:
@@ -92,48 +91,51 @@ def build_bottom_nav(current_page_fn, middle_bool: bool = True,
                 if st.button("Discard changes", key="back_anyways"):
                     st.session_state.back_state = False
                     st.session_state.page_saved = True
-                    st.switch_page(prev_page_name)
+                    st.switch_page(st.Page(prev_page_name))
             else:
                 st.session_state.back_state = False
-                st.switch_page(prev_page_name)
+                st.switch_page(st.Page(prev_page_name))
 
     # MIDDLE: Reset / Save
     if middle_bool:
         with middle:
-            ml, mr = st.columns(2)
-            with ml:
-                if st.button("Reset changes"):
-                    st.session_state.back_state = False
-                    st.session_state.next_state = False
-                    st.session_state.page_saved = True
-                    st.rerun()
-            with mr:
-                if st.button("Save Changes"):
-                    # Apply FU table updates if provided
-                    if table_1_df is not None and table_2_df is not None:
-                        df = futu.table_to_LFUT(df, table_1_df, table_2_df, filter)
-                    if df is not None:
-                        st.session_state.df.loc[df.index, df.columns] = df
-                    st.session_state.page_saved = True
-                    st.success("Changes saved!")
+            with st.container(horizontal_alignment='center'):
+                ml, mr = st.columns(2)
+                with ml:
+                    with st.container(horizontal_alignment='right'):
+                        if st.button("Reset changes"):
+                            st.session_state.back_state = False
+                            st.session_state.next_state = False
+                            st.session_state.page_saved = True
+                            st.rerun()
+                with mr:
+                    if st.button("Save Changes"):
+                        # Apply FU table updates if provided
+                        if table_1_df is not None and table_2_df is not None:
+                            df = futu.table_to_LFUT(df, table_1_df, table_2_df, filter)
+                        if df is not None:
+                            st.session_state.df.loc[df.index, df.columns] = df
+                        st.session_state.page_saved = True
+                        st.success("Changes saved!")
 
     # RIGHT: Next page
     with right:
-        if next_page and st.button("Next ➡️"):
-            st.session_state.back_state = False
-            st.session_state.next_state = True
-            st.session_state.next_state_time = time.time()
+        with st.container(horizontal_alignment='right'):
+            if next_page and st.button("Next ➡️"):
+                st.session_state.back_state = False
+                st.session_state.next_state = True
+                st.session_state.next_state_time = time.time()
 
-        if st.session_state.get("next_state", False):
-            if not st.session_state.get("page_saved", True):
-                st.warning("You have unsaved changes!")
-                if st.button("Discard changes", key="next_anyways"):
+            if st.session_state.get("next_state", False):
+                if not st.session_state.get("page_saved", True):
+                    st.warning("You have unsaved changes!")
+                    if st.button("Discard changes", key="next_anyways"):
+                        st.session_state.next_state = False
+                        st.session_state.page_saved = True
+                        st.switch_page(st.Page(next_page_name))
+                else:
                     st.session_state.next_state = False
-                    st.session_state.page_saved = True
-                    st.switch_page(next_page_name)
-            else:
-                st.session_state.next_state = False
-                st.switch_page(next_page_name)
+                    st.switch_page(st.Page(next_page_name))
 
     return bottom_nav_container
 

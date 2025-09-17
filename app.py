@@ -1,6 +1,8 @@
 # Import libraries
 import streamlit as st
 
+from App_Utils import init_session
+
 # Import .py files for frontend
 from pages.home_page import home_page
 from pages.import_page import import_page
@@ -11,6 +13,8 @@ from pages.layer_page import layer_page
 from pages.download_page import download_page
 
 ### --- Building Website --- ###
+
+init_session()
 
 # ordered list of page functions
 PAGE_ORDER = [

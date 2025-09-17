@@ -2,7 +2,7 @@ import streamlit as st
 import App_Utils as au
 
 def home_page():
-    #au.on_page_load()
+    au.on_page_load()
     st.title("Home")
 
     # --- Introduction Section ---
@@ -89,3 +89,5 @@ def home_page():
 
     # --- Navigation ---
     au.build_bottom_nav(home_page, middle_bool=False)
+
+    

@@ -3,7 +3,7 @@ import App_Utils as au
 import Export_Config_Settings as ecs
 
 def download_page():
-    #au.on_page_load()
+    au.on_page_load()
 
     st.title("We are Download")
     st.dataframe(st.session_state.df)

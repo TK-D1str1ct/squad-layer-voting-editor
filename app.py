@@ -250,7 +250,12 @@ def home_page():
 
     st.divider()
 
-    # --- Side-by-side Upload & Paste ---
+    # --- Navigation ---
+    build_bottom_nav(next_page=st.Page(import_page), middle_bool=False)
+
+def import_page():
+    
+# --- Side-by-side Upload & Paste ---
     st.subheader("Import settings:")
 
     st.radio("Exclude missing layers?", ["Yes", "No"], index=0, horizontal=True, help="Whether to pre-set a layer as excluded if it is not found in your config settings.", key="missing_layers_exclude") #TODO
@@ -294,8 +299,7 @@ def home_page():
 
     st.divider()
 
-    # --- Navigation ---
-    build_bottom_nav(next_page=st.Page(global_page), middle_bool=False)
+    build_bottom_nav(prev_page=st.Page(home_page), next_page=st.Page(global_page))
 
 def global_page():
 
@@ -330,7 +334,7 @@ def global_page():
     st.header('Team 2')
     team_2_table = st.data_editor(state_maping(team2_df, State_map), column_config=select_box_FU(team2_df, State_map), key="team2_editor", on_change=lambda: st.session_state.__setitem__("page_saved", False))
 
-    build_bottom_nav(st.Page(home_page), st.Page(gamemode_page), df=st.session_state.df, table_1_df=reverse_state_maping(team_1_table, Reverse_state_map), table_2_df=reverse_state_maping(team_2_table, Reverse_state_map))
+    build_bottom_nav(st.Page(import_page), st.Page(gamemode_page), df=st.session_state.df, table_1_df=reverse_state_maping(team_1_table, Reverse_state_map), table_2_df=reverse_state_maping(team_2_table, Reverse_state_map))
 
 def gamemode_page():
 
@@ -518,7 +522,8 @@ def download_page():
 
 pg = st.navigation(
     [
-        st.Page(home_page, title='Home'), 
+        st.Page(home_page, title='Home'),
+        st.Page(import_page, title='Import Settings'),
         st.Page(global_page, title='Global Settings'),
         st.Page(gamemode_page, title='Gamemode Settings'),
         st.Page(map_page, title='Map Settings'),

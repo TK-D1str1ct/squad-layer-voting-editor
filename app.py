@@ -251,10 +251,10 @@ def home_page():
     st.divider()
 
     # --- Side-by-side Upload & Paste ---
-    st.subheader("Import settings:")
+    # st.subheader("Import settings:")
 
-    st.radio("Exclude missing layers?", ["Yes", "No"], index=0, horizontal=True, help="Whether to pre-set a layer as excluded if it is not found in your config settings.", key="missing_layers_exclude") #TODO
-    st.radio("Keep obsolete settings?", ["Yes", "No"], index=1, horizontal=True, help="Whether to keep settings that are excluded by default", key="obsolete_settings") #TODO (in future version)
+    # st.radio("Exclude missing layers?", ["Yes", "No"], index=0, horizontal=True, help="Whether to pre-set a layer as excluded if it is not found in your config settings.", key="missing_layers_exclude") #TODO
+    # st.radio("Keep obsolete settings?", ["Yes", "No"], index=1, horizontal=True, help="Whether to keep settings that are excluded by default", key="obsolete_settings") #TODO (in future version)
     # TODO Mod support (upload personal .json file to get mod specific LFUT)
 
     file_col, paste_col = st.columns(2)

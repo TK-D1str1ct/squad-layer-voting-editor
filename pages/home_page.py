@@ -17,6 +17,14 @@ def home_page():
 
     st.divider()
 
+    st.markdown(
+        """
+        <span style = 'font-size:40px;'>🚧 The webtool is still a work in progress! 🚧</span>
+        """,
+        unsafe_allow_html=True)
+
+    st.divider()
+
     # --- How the Tool Works ---
     st.header("How the Tool Works")
     st.markdown(
@@ -44,7 +52,7 @@ def home_page():
         - **Settings Overwrite:** Changing exclusions on a broader scope (e.g., Global) can be overwritten by narrower scopes (e.g., Map or Layer) and vice versa.  
 
         **Importing Existing Settings:**  
-        - If you already have a `LayerVoting.cfg` file with existing exclusions, you can import it at the bottom of this page.  
+        - If you already have a `LayerVoting.cfg` file with existing exclusions, you can import them on the [Import Config Settings](import_page) page.  
         - Your existing settings will be coppied so you can make small adjustments on the [Layer Settings](layer_page) page.  
         - Be careful using other pages; changes on broader scopes will overwrite existing settings.
         """
@@ -61,29 +69,29 @@ def home_page():
         - This allows full flexibility for updating your server without losing any existing LayerVoting settings and the ability to easily share it with others.
         """
     )
+    # TODO
+    # st.divider()
 
-    st.divider()
+    # # --- Data Sources ---
+    # st.header("Where the Data Comes From")
+    # st.markdown(
+    #     """
+    #     - The main data frame `LFUT.csv` used by this tool is **generated from a JSON file** provided by [Contributor Name / GitHub Link](#).  
+    #     - This JSON contains all the layer, faction, and unit data.  
+    #     """
+    # )
 
-    # --- Data Sources ---
-    st.header("Where the Data Comes From")
-    st.markdown(
-        """
-        - The main data frame `LFUT.csv` used by this tool is **generated from a JSON file** provided by [Contributor Name / GitHub Link](#).  
-        - This JSON contains all the layer, faction, and unit data.  
-        """
-    )
+    # st.divider()
 
-    st.divider()
-
-    # --- Open Source / GitHub ---
-    st.header("Open Source / GitHub")
-    st.markdown(
-        """
-        - This project is **open source**!  
-        - You can view the source code, contribute, or report issues on my GitHub page: [My GitHub Repository](#)  
-        - Contributions and feedback are always welcome!
-        """
-    )
+    # # --- Open Source / GitHub ---
+    # st.header("Open Source / GitHub")
+    # st.markdown(
+    #     """
+    #     - This project is **open source**!  
+    #     - You can view the source code, contribute, or report issues on my GitHub page: [My GitHub Repository](#)  
+    #     - Contributions and feedback are always welcome!
+    #     """
+    # )
 
     st.divider()
 

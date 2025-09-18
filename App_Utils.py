@@ -53,7 +53,7 @@ def on_page_load():
     if st.session_state.back_state and time.time() - st.session_state.back_state_time > st.session_state.back_state_TIMEOUT:
         st.session_state.back_state = False
 
-
+# TODO clean up function and place explainers
 def build_bottom_nav(current_page_fn, middle_bool: bool = True,
                      df: pd.DataFrame = None,
                      table_1_df: pd.DataFrame = None,
@@ -103,13 +103,13 @@ def build_bottom_nav(current_page_fn, middle_bool: bool = True,
                 ml, mr = st.columns(2)
                 with ml:
                     with st.container(horizontal_alignment='right'):
-                        if st.button("Reset changes"):
+                        if st.button("🔄 Reset changes", help="Not functional"): #TODO
                             st.session_state.back_state = False
                             st.session_state.next_state = False
                             st.session_state.page_saved = True
                             st.rerun()
                 with mr:
-                    if st.button("Save Changes"):
+                    if st.button("💾 Save Changes"):
                         # Apply FU table updates if provided
                         if table_1_df is not None and table_2_df is not None:
                             df = futu.table_to_LFUT(df, table_1_df, table_2_df, filter)

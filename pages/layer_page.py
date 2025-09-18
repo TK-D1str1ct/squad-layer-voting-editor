@@ -7,7 +7,6 @@ def layer_page():
     st.title("📑 Layer Exclusion Settings")
     st.write("Exclude specific Faction–Unit–Team combinations from individual layers.")
 
-    st.container()
     with st.container(border=True):
         st.markdown("### 🔎 Filters")
         with st.expander("ℹ️ How filtering works"):

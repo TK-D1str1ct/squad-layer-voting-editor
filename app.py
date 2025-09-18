@@ -27,13 +27,23 @@ PAGE_ORDER = [
     download_page,
 ]
 
+PAGE_TITLES = {
+    "home_page": "Home",
+    "import_page": "Import Config Settings",
+    "global_page": "Global Exclusions",
+    "gamemode_page": "Gamemode Exclusions",
+    "map_page": "Map Exclusions",
+    "layer_page": "Layer Exclusions",
+    "download_page": "Download Config",
+}
+
 # make lookup accessible everywhere
 st.session_state.PAGE_ORDER = PAGE_ORDER
 
 # build sidebar nav
 pg = st.navigation(
-    [st.Page(fn, title=fn.__name__.replace("_page","").capitalize()) for fn in PAGE_ORDER],
-    position="sidebar"
+    [st.Page(fn, title=PAGE_TITLES[fn.__name__]) for fn in PAGE_ORDER],
+    position="sidebar",
 )
 
 # pg = st.navigation(

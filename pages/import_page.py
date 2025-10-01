@@ -31,15 +31,15 @@ def import_page():
             horizontal = False,
             key = "layers_exclude")
         
-    # with col2:
-    #     idl = st.radio(
-    #         "Include deprecated layers?",
-    #         ["Yes", "No"],
-    #         help = "Whether to show deprecated layers from your import file in the export file.",
-    #         index = 1,
-    #         horizontal = False,
-    #         key = "deprecated_layers_include",
-    #         disabled = True) #TODO
+    with col2:
+        idl = st.radio(
+            "Include deprecated layers?",
+            ["Yes", "No"],
+            help = "Whether to show deprecated layers from your import file in the export file.",
+            index = 1,
+            horizontal = False,
+            key = "deprecated_layers_include",
+            disabled = True) #TODO
     
     # with col3:
     #     kos = st.radio(
@@ -71,10 +71,10 @@ def import_page():
         eml = False
         ial = True
 
-    # if idl == "Yes":
-    #     idl = True
-    # else:
-    #     idl = False
+    if idl == "Yes":
+        idl = True
+    else:
+        idl = False
 
     # if kos == "Yes":
     #     kos = True
@@ -95,7 +95,7 @@ def import_page():
             )
             if uploaded_settings is not None:
                 try:
-                    st.session_state.df = ics.upload_cfg_to_df(uploaded_settings, eml=eml, eal=eal, ial=ial)#, idl=idl)#, kos=kos) TODO
+                    st.session_state.df = ics.upload_cfg_to_df(uploaded_settings, eml=eml, eal=eal, ial=ial, idl=idl)#, kos=kos) TODO
                     st.success("Settings imported successfully from file!")
                 except Exception as e:
                     st.error(f"Failed to import settings: {e}")
@@ -111,7 +111,7 @@ def import_page():
             )
             if manual_input:
                 try:
-                    st.session_state.df = ics.upload_cfg_to_df(manual_input, eml=eml, eal=eal, ial=ial)#, idl=idl)#, kos=kos) TODO
+                    st.session_state.df = ics.upload_cfg_to_df(manual_input, eml=eml, eal=eal, ial=ial, idl=idl)#, kos=kos) TODO
                     st.success("Settings imported successfully from pasted input!")
                 except Exception as e:
                     st.error(f"Failed to import settings: {e}")

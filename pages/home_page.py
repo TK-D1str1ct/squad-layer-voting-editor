@@ -50,7 +50,7 @@ def home_page():
         - **Settings Overwrite:** Changing exclusions on a broader scope (e.g., Global) can be overwritten by narrower scopes (e.g., Map or Layer) and vice versa.  
 
         **Importing Existing Settings:**  
-        - If you already have a `LayerVoting.cfg` file with existing exclusions, you can import them on the [Import Config Settings](import_page) page.  
+        - If you already have a `LayerVoting.cfg` file with existing exclusions, you can import it on the [Import Config Settings](import_page) page.  
         - Your existing settings will be coppied so you can make small adjustments on the [Layer Exclusions](layer_page) page.  
         - Be careful using other pages; changes on broader scopes will overwrite existing settings.   
 

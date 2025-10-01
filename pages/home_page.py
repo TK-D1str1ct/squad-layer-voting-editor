@@ -31,10 +31,7 @@ def home_page():
         """
         - **Required Server Setting:** This tool is only useful for servers that have `MapRotationMode=LayerList_Vote` set in their `Server.cfg` file.  
         - **Exclusions Logic:** By default, all options are available for voting. A **checked box** indicates that a Faction–Unit combination is **excluded** from voting.  
-        - **Reference Documentation:** For more details on the LayerVoting system, refer to the official Squad documentation [here](https://docs.google.com/document/d/1rtbh9gA00eTqiPPcU_O228JKhA-rWeiwTQDlKCeDPo0).  
-        - **Data Formats:**  
-          - **LFUT Tables:** The main data frame (`LFUT.csv`) representing all layers, factions, and units.  
-          - **FU Tables:** Simplified views used for per-team exclusion settings (two-dimensional tables showing Faction–Unit combinations).
+        - **Reference Documentation:** For more details on the LayerVoting system, refer to the official Squad documentation [here](https://docs.google.com/document/d/1rtbh9gA00eTqiPPcU_O228JKhA-rWeiwTQDlKCeDPo0).
         """
     )
 
@@ -44,16 +41,16 @@ def home_page():
     st.header("Getting Started")
     st.markdown(
         """
-        You can start either by **starting fresh** or **importing existing settings**.
+        You can either **start fresh** or **import existing settings**.
 
         **Starting Fresh:**  
         - You start of with all layers included and no exclusions settings applied.  
-        - It is recommended to follow the website layout to configure settings in order: [Global Settings](global_page) → [Gamemode Settings](gamemode_page) → [Map Settings](map_page) → [Layer Settings](layer_page).  
+        - It is recommended to follow the website layout to configure settings in order: [Global Exclusions](global_page) → [Gamemode Exclusions](gamemode_page) → [Map Exclusions](map_page) → [Layer Exclusions](layer_page).  
         - **Settings Overwrite:** Changing exclusions on a broader scope (e.g., Global) can be overwritten by narrower scopes (e.g., Map or Layer) and vice versa.  
 
         **Importing Existing Settings:**  
         - If you already have a `LayerVoting.cfg` file with existing exclusions, you can import them on the [Import Config Settings](import_page) page.  
-        - Your existing settings will be coppied so you can make small adjustments on the [Layer Settings](layer_page) page.  
+        - Your existing settings will be coppied so you can make small adjustments on the [Layer Exclusions](layer_page) page.  
         - Be careful using other pages; changes on broader scopes will overwrite existing settings.
         """
     )

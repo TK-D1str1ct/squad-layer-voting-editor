@@ -19,7 +19,8 @@ def home_page():
 
     st.markdown(
         """
-        <span style = 'font-size:40px;'>🚧 The webtool is still a work in progress! 🚧</span>
+        <span style = 'font-size:40px;'>🚧 The webtool is still a work in progress! 🚧</span>   
+        The webtool is functional, however some features may not work (yet) and some things might be poorly explained.
         """,
         unsafe_allow_html=True)
 
@@ -51,7 +52,9 @@ def home_page():
         **Importing Existing Settings:**  
         - If you already have a `LayerVoting.cfg` file with existing exclusions, you can import them on the [Import Config Settings](import_page) page.  
         - Your existing settings will be coppied so you can make small adjustments on the [Layer Exclusions](layer_page) page.  
-        - Be careful using other pages; changes on broader scopes will overwrite existing settings.
+        - Be careful using other pages; changes on broader scopes will overwrite existing settings.   
+
+        Important: When making changes ensure you save them before navigating to another page!
         """
     )
 

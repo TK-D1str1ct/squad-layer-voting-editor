@@ -11,7 +11,7 @@ def config_to_dict(settings_list:list):
     # Create empty dict
     config_dict = {}
 
-    # For loop over all layers in config file
+    # For loop over all lines in config file
     for layer in settings_list:
         excluded_layer = layer.startswith("//") # Check if the layer is excluded
         if excluded_layer:
@@ -47,7 +47,7 @@ def config_to_dict(settings_list:list):
 
     return config_dict
 
-def apply_config_settings(row:pd.Series, config_dict:dict, missing_layers:list):
+def apply_config_settings(row:pd.Series, config_dict:dict, missing_layers:list, eml:bool, eal:bool, ial:bool):
 
     # Get layer name
     layer = row.name
@@ -58,8 +58,15 @@ def apply_config_settings(row:pd.Series, config_dict:dict, missing_layers:list):
 
     if layer_config_settings is None: # Check if the layer exists in the .cfg file
         missing_layers.append(layer) # If the layer does not exist it will be added to a warning list and no exclusions at all will be implemented
+        if eml or eal: # If eml is True the missing layer will be excluded by deffault
+            layer_settings['Exclude'] = True
     else:
-        layer_settings['Exclude'] = layer_config_settings['Exclude']
+        if eal: # If eal is True all layers will be excluded by default
+            layer_settings['Exclude'] = True
+        elif ial: # If ial is True all layers will be included by default
+            layer_settings['Exclude'] = False
+        else: # Sets whether the layer is excluded based on imported settings
+            layer_settings['Exclude'] = layer_config_settings['Exclude']
         layer_settings = get_config_settings(layer_settings, layer_config_settings['team1'], 1)
         layer_settings = get_config_settings(layer_settings, layer_config_settings['team2'], 2)
 
@@ -92,7 +99,8 @@ def get_config_settings(layer_settings:pd.Series, team_config_settings:list, tea
 # %%
 # --- Import cfg file --- #
 
-def upload_cfg_to_df(cfg_input):
+# Function used on webapp
+def upload_cfg_to_df(cfg_input, eml:bool = True, eal:bool = False, ial:bool = False, idl:bool = False, kos:bool = False):
 
     missing_layers = []
     LFUT_empty_df = pd.read_csv('LFUT.csv', index_col=0)
@@ -104,6 +112,6 @@ def upload_cfg_to_df(cfg_input):
         # File upload: read lines as bytes and decode
         settings_list = [line.decode("utf-8").strip() for line in cfg_input if line.strip()]
     
-    LFUT_import_df = LFUT_empty_df.apply(apply_config_settings, axis=1, args=(config_to_dict(settings_list),missing_layers,))
+    LFUT_import_df = LFUT_empty_df.apply(apply_config_settings, axis=1, args=(config_to_dict(settings_list),missing_layers,eml,eal,ial,))
 
     return LFUT_import_df

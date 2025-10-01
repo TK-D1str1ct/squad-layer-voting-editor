@@ -5,17 +5,71 @@ import Export_Config_Settings as ecs
 def download_page():
     au.on_page_load()
 
-    st.title("We are Download", help="Blame Leon for this title")
+    st.title("📤 We are Download", help="Blame Leon for this title")
     st.dataframe(st.session_state.df)
+
+    st.subheader("Export settings:")
 
     # Outer container wrapping everything below
     with st.container(border=True):
+        # Export settings
+        st.markdown("Change export settings based on your preferences. Make sure to do this *before* clicking the export button")
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            eel = st.radio(
+                "Export excluded layers?",
+                ["Yes", "No"],
+                help = "Whether to export excluded layers as commented out lines or leave them out entirely",
+                index = 0,
+                horizontal = False,
+                key = "export_excluded",
+                disabled = False
+            )
+        
+        with col2:
+            icet = st.radio(
+                "Include config explainer text?",
+                ["Yes", "No"],
+                help = "Whether to include the default explainer text at the top of a new LayerVoting.cfg file",
+                index = 1,
+                horizontal = False,
+                key = "include_explain",
+                disabled = False
+            )
+        
+        with col3:
+            iwl = st.radio(
+                "Include white line between maps?",
+                ["Yes", "No"],
+                help = "Whether to include a white line in between layers from different maps",
+                index = 0,
+                horizontal = False,
+                key = "include_whiteline",
+                disabled = False
+            )
+
+        # Change variables based on radio settings
+        if eel == "Yes":
+            eel = False
+        else:
+            eel = True
+
+        if icet == "Yes":
+            icet = True
+        else:
+            icet = False
+
+        if iwl == "Yes":
+            iwl = True
+        else:
+            iwl = False
+
         # Export button (centered)
         export_clicked = st.columns([3, 1, 3])[1].button(
             "Export current settings", type="primary"
         )
         if export_clicked:
-            cache = ecs.download_as_cfg(st.session_state.df)
+            cache = ecs.download_as_cfg(st.session_state.df, eel, icet, iwl)
             
             # First inner container -> two download buttons
             with st.container(border=True):

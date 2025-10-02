@@ -15,8 +15,8 @@ empty_LFUT_df = pd.read_csv('LFUT.csv', index_col=0)
 
 def init_session():
     if 'df' not in st.session_state:
-        st.session_state.df = empty_LFUT_df
-        st.session_state.new_df = empty_LFUT_df
+        st.session_state.df = empty_LFUT_df.copy()
+        st.session_state.new_df = empty_LFUT_df.copy()
 
     if 'page_saved' not in st.session_state:
         st.session_state.page_saved = True

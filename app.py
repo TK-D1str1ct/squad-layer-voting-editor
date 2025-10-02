@@ -3,6 +3,10 @@ import streamlit as st
 
 from App_Utils import init_session
 
+### --- Building Website --- ###
+
+init_session()
+
 # Import .py files for frontend
 from pages.home_page import home_page
 from pages.import_page import import_page
@@ -11,10 +15,6 @@ from pages.gamemode_page import gamemode_page
 from pages.map_page import map_page
 from pages.layer_page import layer_page
 from pages.download_page import download_page
-
-### --- Building Website --- ###
-
-init_session()
 
 # ordered list of page functions
 PAGE_ORDER = [
@@ -45,17 +45,6 @@ pg = st.navigation(
     [st.Page(fn, title=PAGE_TITLES[fn.__name__]) for fn in PAGE_ORDER],
     position="sidebar",
 )
-
-# pg = st.navigation(
-#     [
-#         st.Page(home_page, title='Home'),
-#         st.Page(import_page, title='Import Settings'),
-#         st.Page(global_page, title='Global Settings'),
-#         st.Page(gamemode_page, title='Gamemode Settings'),
-#         st.Page(map_page, title='Map Settings'),
-#         st.Page(layer_page, title='Layer Settings'),
-#         st.Page(download_page, title='Download Config')
-#     ], position='sidebar')
     
 st.set_page_config(layout='wide')
 pg.run()

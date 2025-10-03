@@ -54,7 +54,7 @@ def layer_page():
         )
 
     # --- Apply filters ---
-    df_filtered = au.apply_filters(st.session_state.df.copy(), row_filter_input, row_filter_mode, axis="rows")
+    df_filtered = au.apply_filters(st.session_state.df.copy(), row_filter_input, row_filter_mode, axis="rows") #TODO something does not work properly here. Most likely as a result of teh apply_filters function
     df_filtered = au.apply_filters(df_filtered, col_filter_input, col_filter_mode, axis="cols")
     df_filtered = df_filtered.dropna(axis=1, how="all")
 

@@ -22,4 +22,4 @@ def gamemode_page():
     st.header('Team 2')
     team_2_table = st.data_editor(au.state_maping(team2_df, au.state_map), column_config=au.select_box_FU(team2_df, au.state_map), key="team2_editor", on_change=lambda: st.session_state.__setitem__("page_saved", False))
 
-    au.build_bottom_nav(gamemode_page, df=st.session_state.df, table_1_df=au.state_maping(team_1_table, au.reverse_state_map), table_2_df=au.state_maping(team_2_table, au.reverse_state_map), filter=st.session_state.gamemode_filter)    
+    au.build_bottom_nav(gamemode_page, df=st.session_state.df, table_1_df=au.state_maping(team_1_table, au.reverse_state_map), table_2_df=au.state_maping(team_2_table, au.reverse_state_map), filter=st.session_state.gamemode_filter) #TODO gamemode filter for AAS also applies changes to RAAS    

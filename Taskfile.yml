@@ -1,0 +1,11 @@
+# https://taskfile.dev
+
+version: '3'
+
+tasks:
+  run:
+    cmds:
+      - uv run streamlit run app.py
+  update_lfut:
+    cmds:
+      - uv run LFUT_from_json.py

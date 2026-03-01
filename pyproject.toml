@@ -1,0 +1,9 @@
+[project]
+name = "squad-layer-voting-editor"
+version = "0.1.0"
+description = "A project intended to simplify creation and editing of Squad voting pool configurations for server admins"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "streamlit>=1.54.0",
+]

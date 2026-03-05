@@ -1,6 +1,7 @@
 import streamlit as st
 import App_Utils as au
 
+
 def home_page():
     au.on_page_load()
     st.title("Home")
@@ -22,7 +23,8 @@ def home_page():
         <span style = 'font-size:40px;'>🚧 The webtool is still a work in progress! 🚧</span>   
         The webtool is functional, however some features may not work (yet) and some things might be poorly explained.
         """,
-        unsafe_allow_html=True)
+        unsafe_allow_html=True,
+    )
 
     st.divider()
 
@@ -76,8 +78,8 @@ def home_page():
     # st.header("Where the Data Comes From")
     # st.markdown(
     #     """
-    #     - The main data frame `LFUT.csv` used by this tool is **generated from a JSON file** provided by [Contributor Name / GitHub Link](#).  
-    #     - This JSON contains all the layer, faction, and unit data.  
+    #     - The main data frame `LFUT.csv` used by this tool is **generated from a JSON file** provided by [Contributor Name / GitHub Link](#).
+    #     - This JSON contains all the layer, faction, and unit data.
     #     """
     # )
 
@@ -87,8 +89,8 @@ def home_page():
     # st.header("Open Source / GitHub")
     # st.markdown(
     #     """
-    #     - This project is **open source**!  
-    #     - You can view the source code, contribute, or report issues on my GitHub page: [My GitHub Repository](#)  
+    #     - This project is **open source**!
+    #     - You can view the source code, contribute, or report issues on my GitHub page: [My GitHub Repository](#)
     #     - Contributions and feedback are always welcome!
     #     """
     # )
@@ -97,5 +99,3 @@ def home_page():
 
     # --- Navigation ---
     au.build_bottom_nav(home_page, middle_bool=False)
-
-    

@@ -1,6 +1,7 @@
 import streamlit as st
 import App_Utils as au
 
+
 def layer_page():
     au.on_page_load()
 
@@ -28,12 +29,18 @@ def layer_page():
         with row_filter:
             with st.container(border=True):
                 row_filter_input = st.text_input("Layer filter (comma-separated)")
-                row_filter_mode = st.radio("Layer filter mode", ["OR", "AND"], horizontal=True)
+                row_filter_mode = st.radio(
+                    "Layer filter mode", ["OR", "AND"], horizontal=True
+                )
 
         with column_filter:
             with st.container(border=True):
-                col_filter_input = st.text_input("Faction/Unit filter (comma-separated)")
-                col_filter_mode = st.radio("Faction/Unit filter mode", ["OR", "AND"], horizontal=True)
+                col_filter_input = st.text_input(
+                    "Faction/Unit filter (comma-separated)"
+                )
+                col_filter_mode = st.radio(
+                    "Faction/Unit filter mode", ["OR", "AND"], horizontal=True
+                )
 
     with st.expander("ℹ️ How layer exclusions work"):
         st.markdown(
@@ -50,12 +57,16 @@ def layer_page():
 
             Copy-Pasting between cells is possible.
             """,
-            unsafe_allow_html=True
+            unsafe_allow_html=True,
         )
 
     # --- Apply filters ---
-    df_filtered = au.apply_filters(st.session_state.df.copy(), row_filter_input, row_filter_mode, axis="rows") #TODO something does not work properly here. Most likely as a result of teh apply_filters function
-    df_filtered = au.apply_filters(df_filtered, col_filter_input, col_filter_mode, axis="cols")
+    df_filtered = au.apply_filters(
+        st.session_state.df.copy(), row_filter_input, row_filter_mode, axis="rows"
+    )  # TODO something does not work properly here. Most likely as a result of teh apply_filters function
+    df_filtered = au.apply_filters(
+        df_filtered, col_filter_input, col_filter_mode, axis="cols"
+    )
     df_filtered = df_filtered.dropna(axis=1, how="all")
 
     # --- Example column config ---
@@ -69,8 +80,8 @@ def layer_page():
         df_filtered,
         key="editor",
         column_config=config,
-        width='stretch',
-        on_change=lambda: st.session_state.__setitem__("page_saved", False)
+        width="stretch",
+        on_change=lambda: st.session_state.__setitem__("page_saved", False),
     )
 
     au.build_bottom_nav(layer_page, df=edited_df)

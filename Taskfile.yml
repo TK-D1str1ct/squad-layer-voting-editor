@@ -3,9 +3,12 @@
 version: '3'
 
 tasks:
-  run:
+  start:
     cmds:
       - uv run streamlit run app.py
+  format:
+    cmds:
+      - uv run ruff format
   lfut:fetch:
     cmds:
       - curl -L https://raw.githubusercontent.com/fantinodavide/SquadLayerList/main/layers.json -o layers_upstream.json

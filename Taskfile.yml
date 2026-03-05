@@ -6,6 +6,11 @@ tasks:
   run:
     cmds:
       - uv run streamlit run app.py
-  update_lfut:
+  lfut:fetch:
+    cmds:
+      - curl -L https://raw.githubusercontent.com/fantinodavide/SquadLayerList/main/layers.json -o layers_upstream.json
+      - rm layers.json
+      - mv layers_upstream.json layers.json
+  lfut:update:
     cmds:
       - uv run LFUT_from_json.py

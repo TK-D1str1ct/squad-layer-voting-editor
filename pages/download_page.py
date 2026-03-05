@@ -2,6 +2,7 @@ import streamlit as st
 import App_Utils as au
 import Export_Config_Settings as ecs
 
+
 def download_page():
     au.on_page_load()
 
@@ -13,39 +14,41 @@ def download_page():
     # Outer container wrapping everything below
     with st.container(border=True):
         # Export settings
-        st.markdown("Change export settings based on your preferences. Make sure to do this *before* clicking the export button")
+        st.markdown(
+            "Change export settings based on your preferences. Make sure to do this *before* clicking the export button"
+        )
         col1, col2, col3 = st.columns(3)
         with col1:
             eel = st.radio(
                 "Export excluded layers?",
                 ["Yes", "No"],
-                help = "Whether to export excluded layers as commented out lines or leave them out entirely",
-                index = 0,
-                horizontal = False,
-                key = "export_excluded",
-                disabled = False
+                help="Whether to export excluded layers as commented out lines or leave them out entirely",
+                index=0,
+                horizontal=False,
+                key="export_excluded",
+                disabled=False,
             )
-        
+
         with col2:
             icet = st.radio(
                 "Include config explainer text?",
                 ["Yes", "No"],
-                help = "Whether to include the default explainer text at the top of a new LayerVoting.cfg file",
-                index = 1,
-                horizontal = False,
-                key = "include_explain",
-                disabled = False
+                help="Whether to include the default explainer text at the top of a new LayerVoting.cfg file",
+                index=1,
+                horizontal=False,
+                key="include_explain",
+                disabled=False,
             )
-        
+
         with col3:
             iwl = st.radio(
                 "Include white line between maps?",
                 ["Yes", "No"],
-                help = "Whether to include a white line in between layers from different maps",
-                index = 0,
-                horizontal = False,
-                key = "include_whiteline",
-                disabled = False
+                help="Whether to include a white line in between layers from different maps",
+                index=0,
+                horizontal=False,
+                key="include_whiteline",
+                disabled=False,
             )
 
         # Change variables based on radio settings
@@ -70,7 +73,7 @@ def download_page():
         )
         if export_clicked:
             cache = ecs.download_as_cfg(st.session_state.df, eel, icet, iwl)
-            
+
             # First inner container -> two download buttons
             with st.container(border=True):
                 st.markdown(
@@ -81,21 +84,21 @@ def download_page():
                 col1, col2, col3 = st.columns([0.18, 0.18, 0.64])
                 with col1:
                     st.download_button(
-                        label='Download as LayerVoting.cfg',
+                        label="Download as LayerVoting.cfg",
                         data=cache,
-                        file_name='LayerVoting.cfg',
-                        type='primary',
+                        file_name="LayerVoting.cfg",
+                        type="primary",
                         icon=":material/download:",
-                        key="dl_cfg"
+                        key="dl_cfg",
                     )
                 with col2:
                     st.download_button(
-                        label='Download as LayerVoting.txt',
+                        label="Download as LayerVoting.txt",
                         data=cache,
-                        file_name='LayerVoting.txt',
-                        type='primary',
+                        file_name="LayerVoting.txt",
+                        type="primary",
                         icon=":material/download:",
-                        key="dl_txt"
+                        key="dl_txt",
                     )
 
             # Second inner container -> code block

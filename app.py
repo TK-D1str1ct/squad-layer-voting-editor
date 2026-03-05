@@ -45,6 +45,6 @@ pg = st.navigation(
     [st.Page(fn, title=PAGE_TITLES[fn.__name__]) for fn in PAGE_ORDER],
     position="sidebar",
 )
-    
-st.set_page_config(layout='wide')
+
+st.set_page_config(layout="wide")
 pg.run()

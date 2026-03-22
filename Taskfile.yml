@@ -5,7 +5,10 @@ version: '3'
 tasks:
   start:
     cmds:
-      - uv run streamlit run app.py
+      - uv run streamlit run app.py {{.CLI_ARGS}}
+  lint:
+    cmds:
+      - uv run ruff check
   format:
     cmds:
       - uv run ruff format

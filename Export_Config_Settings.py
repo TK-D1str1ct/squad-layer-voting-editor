@@ -29,7 +29,6 @@ SPLIT = change_mask[change_mask].index[0] + 1
 
 
 def config_translate(row: pd.Series, eel: bool):
-
     # Get layer name
     layer = row.name
 
@@ -72,7 +71,6 @@ def config_translate(row: pd.Series, eel: bool):
 
 
 def team_settings(row: pd.Series):
-
     team_settings = ""
     row.dropna(inplace=True)
 
@@ -104,7 +102,6 @@ def team_settings(row: pd.Series):
 
 
 def settings_check(row: pd.Series):
-
     # Get layer name
     layer = row.name
 

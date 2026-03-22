@@ -2,7 +2,6 @@
 # --- Importing packages --- #
 
 import pandas as pd
-import numpy as np
 import json
 
 # %%
@@ -47,7 +46,7 @@ def create_info_df_JSON(data: dict, columns: list, filter: list, key: str):
         info_df[columns[0]] = info_df[columns[0]].str.split("_").str[-1]
     else:
         # TODO add custom error message
-        a = 1
+        _ = 1
 
     return info_df
 

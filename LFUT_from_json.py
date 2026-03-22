@@ -1,3 +1,13 @@
+"""
+Build the canonical LFUT dataset from the upstream `layers.json` export.
+
+The generated `LFUT.csv` uses:
+
+- layer IDs as the index (`L`)
+- `Faction_Unit_Team` strings as columns (`FUT`)
+- boolean values indicating whether a voting option is excluded on that layer
+"""
+
 # %%
 # --- Importing packages --- #
 

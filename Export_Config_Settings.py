@@ -1,3 +1,7 @@
+"""
+Export the internal LFUT matrix back into Squad `LayerVoting.cfg` syntax.
+"""
+
 # %%
 # --- Importing packages --- #
 

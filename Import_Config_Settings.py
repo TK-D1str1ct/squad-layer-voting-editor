@@ -1,3 +1,7 @@
+"""
+Import `LayerVoting.cfg` text into the project's LFUT representation.
+"""
+
 # %%
 # --- Importing packages --- #
 
@@ -8,7 +12,6 @@ import pandas as pd
 
 
 def config_to_dict(settings_list: list):
-
     # Create empty dict
     config_dict = {}
 
@@ -69,7 +72,6 @@ def apply_config_settings(
     eal: bool,
     ial: bool,
 ):
-
     # Get layer name
     layer = row.name
     layer_settings = row.copy()
@@ -103,7 +105,6 @@ def apply_config_settings(
 def get_config_settings(
     layer_settings: pd.Series, team_config_settings: list, team: int
 ):
-
     for exclusions in team_config_settings:
         exclusions = exclusions.strip()
         if not exclusions:
@@ -152,7 +153,6 @@ def upload_cfg_to_df(
     idl: bool = False,
     kos: bool = False,
 ):
-
     missing_layers = []
     LFUT_empty_df = pd.read_csv("LFUT.csv", index_col=0)
 

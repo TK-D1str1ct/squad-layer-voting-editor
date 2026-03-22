@@ -1,3 +1,7 @@
+"""
+Shared Streamlit helpers for session state, filters, and LFUT/FU table UI.
+"""
+
 # %%
 # --- Importing packages --- #
 
@@ -218,10 +222,10 @@ def build_bottom_nav(
 # --- Define LFUT table building functions --- #
 
 
-# Layer filter function
 def apply_filters(
     df: pd.DataFrame, filter_input: str, filter_mode: str, axis: str = "rows"
 ):
+    """Layer filter function"""
 
     # Check if there is a filter to apply
     if not filter_input.strip():
@@ -260,8 +264,8 @@ def apply_filters(
 # --- Define FU table building functions --- #
 
 
-# Explainer for FU tables
 def FU_explainer(filter: str = ""):
+    """Explainer for FU tables"""
 
     if filter != "":
         filter = " " + filter
@@ -286,8 +290,8 @@ def FU_explainer(filter: str = ""):
         )
 
 
-# Replaces df cell values according to state_map dictionary
 def state_maping(df: pd.DataFrame, state_map: dict):
+    """Replaces df cell values according to state_map dictionary"""
 
     df = df.replace(state_map)
     df = df.infer_objects(copy=False)
@@ -295,8 +299,8 @@ def state_maping(df: pd.DataFrame, state_map: dict):
     return df
 
 
-# Creates column config settings for FU tables
 def select_box_FU(df: pd.DataFrame, state_map: dict):
+    """Creates column config settings for FU tables"""
 
     df = state_maping(df, state_map)
 

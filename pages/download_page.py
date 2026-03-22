@@ -72,7 +72,12 @@ def download_page():
             "Export current settings", type="primary"
         )
         if export_clicked:
-            cache = ecs.download_as_cfg(st.session_state.df, eel, icet, iwl)
+            cache = ecs.download_as_cfg(
+                st.session_state.df,
+                export_excluded_layers=eel,
+                include_explainer_text=icet,
+                include_white_lines=iwl,
+            )
 
             # First inner container -> two download buttons
             with st.container(border=True):

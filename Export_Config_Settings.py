@@ -155,23 +155,26 @@ def format_with_whitelines(config_series: pd.Series):
 
 
 def download_as_cfg(
-    LFUT_df: pd.DataFrame, eel: bool = False, icet: bool = True, iwl: bool = True
+    LFUT_df: pd.DataFrame,
+    export_excluded_layers: bool = False,
+    include_explainer_text: bool = True,
+    include_white_lines: bool = True,
 ):
     config_series = LFUT_df.apply(
-        config_translate, axis=1, args=(eel,)
+        config_translate, axis=1, args=(export_excluded_layers,)
     )  # Apply config translater to all layers in df
     config_series = (
         config_series.dropna()
     )  # Remove empty rows as a consequence of not exporting excluded layers
 
-    if iwl:
+    if include_white_lines:
         output = format_with_whitelines(config_series)
     else:
         output = "\n".join(config_series.astype(str))
 
     output = f"// This LayerVoting.cfg was generated using https://squad-voting-config.streamlit.app/\n\n{output}"
 
-    if icet:
+    if include_explainer_text:
         output = f"{HEADER}\n{output}"
 
     return output

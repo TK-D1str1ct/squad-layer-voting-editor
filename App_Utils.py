@@ -21,7 +21,6 @@ empty_LFUT_df = pd.read_csv("LFUT.csv", index_col=0)
 def init_session():
     if "df" not in st.session_state:
         st.session_state.df = empty_LFUT_df.copy()
-        st.session_state.new_df = empty_LFUT_df.copy()
 
     if "page_saved" not in st.session_state:
         st.session_state.page_saved = True
@@ -124,15 +123,20 @@ def build_bottom_nav(
                             st.rerun()
                 with mr:
                     if st.button("💾 Save Changes"):
+                        updated_df = None
+
                         # Apply FU table updates if provided
                         if table_1_df is not None and table_2_df is not None:
-                            st.session_state.new_df = futu.table_to_LFUT(
-                                df, table_1_df, table_2_df, filter
+                            updated_df = futu.table_to_LFUT(
+                                df.copy(), table_1_df, table_2_df, filter
                             )
-                        if df is not None:
-                            st.session_state.df.loc[df.index, df.columns] = (
-                                st.session_state.new_df
-                            )
+                        elif df is not None:
+                            updated_df = df.copy()
+
+                        if updated_df is not None:
+                            st.session_state.df.loc[
+                                updated_df.index, updated_df.columns
+                            ] = updated_df
                         st.session_state.page_saved = True
                         st.success("Changes saved!")
 

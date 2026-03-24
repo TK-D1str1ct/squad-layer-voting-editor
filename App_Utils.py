@@ -8,6 +8,7 @@ Shared Streamlit helpers for session state, filters, and LFUT/FU table UI.
 import time
 import pandas as pd
 import streamlit as st
+import os
 
 import FUT_Utils as futu
 
@@ -51,6 +52,10 @@ reverse_state_map = {v: k for k, v in state_map.items()}
 
 # %%
 # --- Define page building functions --- #
+
+
+def is_debug() -> bool:
+    return os.getenv("DEBUG", "false") == "true"
 
 
 # Does something (i think? EDIT: Leon told me it does)
@@ -158,6 +163,13 @@ def build_bottom_nav(
                 else:
                     st.session_state.next_state = False
                     st.switch_page(st.Page(next_page_name))
+
+    if is_debug():
+        # Display a readonly dataframe view of only the changes from an empty to the current state
+        # Useful for debugging weird change behavior between pages
+        st.subheader("DEBUG")
+        st.write("Dataframe diff view")
+        st.write(empty_LFUT_df.compare(st.session_state.df))
 
     return bottom_nav_container
 

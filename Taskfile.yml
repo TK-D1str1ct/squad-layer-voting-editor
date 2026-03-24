@@ -6,6 +6,11 @@ tasks:
   start:
     cmds:
       - uv run streamlit run app.py {{.CLI_ARGS}}
+  start:debug:
+    cmds:
+      - uv run streamlit run app.py {{.CLI_ARGS}}
+    env:
+      DEBUG: true
   lint:
     cmds:
       - uv run ruff check

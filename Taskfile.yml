@@ -38,7 +38,7 @@ tasks:
   package:
     desc: Create a tarball with only the files needed to run the Streamlit server
     vars:
-      ARCHIVE_NAME: '{{default "squad-voting-pool.tar.gz" .ARCHIVE_NAME}}'
+      ARCHIVE_NAME: '{{default "squad-layer-voting-editor.tar.gz" .ARCHIVE_NAME}}'
       ARCHIVE_PATH: 'dist/{{.ARCHIVE_NAME}}'
     cmds:
       - rm -rf dist

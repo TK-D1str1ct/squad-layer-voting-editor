@@ -13,6 +13,11 @@ dependencies = [
 [dependency-groups]
 dev = [
     "ipython>=9.10.0",
+    "pytest>=8.4.2",
     "ptpython>=3.0.32",
     "ruff>=0.15.4",
 ]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]

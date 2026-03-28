@@ -25,3 +25,6 @@ tasks:
   lfut:update:
     cmds:
       - uv run LFUT_from_json.py
+  export_requirements:
+    cmds:
+      - uv export --no-hashes --no-dev -o requirements.txt

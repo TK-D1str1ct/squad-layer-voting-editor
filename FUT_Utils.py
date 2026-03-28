@@ -1,27 +1,37 @@
+"""
+Translate between LFUT storage and summarized per-team FU tables.
+
+The app stores data as an `LFUT` matrix with layers as rows and `FUT` values as
+columns. The global, map, and gamemode editors instead work with summarized
+`FU` tables, split into one table per team. This module converts between those
+two representations.
+"""
+
 # %%
 # --- Importing packages --- #
 
 import pandas as pd
-pd.set_option('future.no_silent_downcasting', True)
+
+pd.set_option("future.no_silent_downcasting", True)
 
 # %%
 # --- Helper Functions --- #
 
-def get_FU_list(LFUT_df:pd.DataFrame, team_int:int, filter=None):
 
+def get_FU_list(LFUT_df: pd.DataFrame, team_int: int, filter=None):
     if filter is not None:
         LFUT_filter_df = LFUT_df[LFUT_df.index.str.contains(filter)]
         LFUT_filter_df = LFUT_filter_df.dropna(axis=1, how="all")
         FUT_list = LFUT_filter_df.columns.to_list()[1:]
     else:
         FUT_list = LFUT_df.columns.to_list()[1:]
-    
+
     FU_list = [x for x in FUT_list if x.endswith(f"_{team_int}")]
 
     return FU_list
 
-def create_empty_FU_df(LFUT_df:pd.DataFrame, team_int:int, filter=None):
 
+def create_empty_FU_df(LFUT_df: pd.DataFrame, team_int: int, filter=None):
     FUT_list = get_FU_list(LFUT_df, team_int, filter)
 
     factions = list(dict.fromkeys(fut.split("_")[0] for fut in FUT_list))
@@ -35,8 +45,8 @@ def create_empty_FU_df(LFUT_df:pd.DataFrame, team_int:int, filter=None):
 
     return FU_df
 
-def match_exclusions(LFUT_df:pd.DataFrame, team_int:int, filter=None):
 
+def match_exclusions(LFUT_df: pd.DataFrame, team_int: int, filter=None):
     FUT_list = get_FU_list(LFUT_df, team_int, filter)
     FU_df = create_empty_FU_df(LFUT_df, team_int, filter)
 
@@ -60,21 +70,25 @@ def match_exclusions(LFUT_df:pd.DataFrame, team_int:int, filter=None):
                 FU_df.loc[faction, unit] = False
         else:
             # Mixed True/False
-            FU_df.loc[faction, unit] = "Mixed" #TODO give permanent name
+            FU_df.loc[faction, unit] = "Mixed"  # TODO give permanent name
 
     return FU_df
 
-def implemet_exclusions(LFUT_df:pd.DataFrame, table_df:pd.DataFrame, team_int:int, filter=None):
 
+def implement_exclusions(
+    LFUT_df: pd.DataFrame, table_df: pd.DataFrame, team_int: int, filter=None
+):
     FUT_action_s = table_df.stack()
-    FUT_action_s.index = [f"{faction}_{unit}_{team_int}" for faction, unit in FUT_action_s.index]
+    FUT_action_s.index = [
+        f"{faction}_{unit}_{team_int}" for faction, unit in FUT_action_s.index
+    ]
 
     LFUT_df = apply_FUT_to_df(LFUT_df, FUT_action_s, filter)
 
     return LFUT_df
 
-def apply_FUT_to_df(LFUT_df:pd.DataFrame, FUT_action_s:pd.Series, filter=None):
 
+def apply_FUT_to_df(LFUT_df: pd.DataFrame, FUT_action_s: pd.Series, filter=None):
     for fut, action in FUT_action_s.items():
         if action in [True, False]:
             if fut in LFUT_df.columns:
@@ -86,11 +100,12 @@ def apply_FUT_to_df(LFUT_df:pd.DataFrame, FUT_action_s:pd.Series, filter=None):
 
     return LFUT_df
 
+
 # %%
 # --- Table functions (LFUT -> Table) --- #
 
-def LFUT_to_table(active_LFUT_df:pd.DataFrame, filter=None):
 
+def LFUT_to_table(active_LFUT_df: pd.DataFrame, filter=None):
     table_team1 = match_exclusions(active_LFUT_df, 1, filter)
     table_team2 = match_exclusions(active_LFUT_df, 2, filter)
 
@@ -101,11 +116,17 @@ def LFUT_to_table(active_LFUT_df:pd.DataFrame, filter=None):
 
     return table_team1, table_team2
 
+
 # --- Table functions (Table -> LFUT) --- #
 
-def table_to_LFUT(active_LFUT_df:pd.DataFrame, table_team1:pd.DataFrame, table_team2:pd.DataFrame, filter=None):
 
-    active_LFUT_df = implemet_exclusions(active_LFUT_df, table_team1, 1, filter)
-    active_LFUT_df = implemet_exclusions(active_LFUT_df, table_team2, 2, filter)
+def table_to_LFUT(
+    active_LFUT_df: pd.DataFrame,
+    table_team1: pd.DataFrame,
+    table_team2: pd.DataFrame,
+    filter=None,
+):
+    active_LFUT_df = implement_exclusions(active_LFUT_df, table_team1, 1, filter)
+    active_LFUT_df = implement_exclusions(active_LFUT_df, table_team2, 2, filter)
 
     return active_LFUT_df

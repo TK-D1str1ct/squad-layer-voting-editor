@@ -1,0 +1,27 @@
+# https://taskfile.dev
+
+version: '3'
+
+tasks:
+  start:
+    cmds:
+      - uv run streamlit run app.py {{.CLI_ARGS}}
+  start:debug:
+    cmds:
+      - uv run streamlit run app.py {{.CLI_ARGS}}
+    env:
+      DEBUG: true
+  lint:
+    cmds:
+      - uv run ruff check
+  format:
+    cmds:
+      - uv run ruff format
+  lfut:fetch:
+    cmds:
+      - curl -L https://raw.githubusercontent.com/fantinodavide/SquadLayerList/main/layers.json -o layers_upstream.json
+      - rm layers.json
+      - mv layers_upstream.json layers.json
+  lfut:update:
+    cmds:
+      - uv run LFUT_from_json.py

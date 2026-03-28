@@ -1,9 +1,14 @@
+"""
+Shared Streamlit helpers for session state, filters, and LFUT/FU table UI.
+"""
+
 # %%
 # --- Importing packages --- #
 
 import time
 import pandas as pd
 import streamlit as st
+import os
 
 import FUT_Utils as futu
 
@@ -11,55 +16,67 @@ import FUT_Utils as futu
 # --- Initialization --- #
 
 # Empty LFUT df
-empty_LFUT_df = pd.read_csv('LFUT.csv', index_col=0)
+empty_LFUT_df = pd.read_csv("LFUT.csv", index_col=0)
+
 
 def init_session():
-    if 'df' not in st.session_state:
+    if "df" not in st.session_state:
         st.session_state.df = empty_LFUT_df.copy()
-        st.session_state.new_df = empty_LFUT_df.copy()
 
-    if 'page_saved' not in st.session_state:
+    if "page_saved" not in st.session_state:
         st.session_state.page_saved = True
 
-    if 'back_state' not in st.session_state:
+    if "back_state" not in st.session_state:
         st.session_state.back_state = False
         st.session_state.back_state_time = None
         st.session_state.back_state_TIMEOUT = 10
 
-    if 'next_state' not in st.session_state:
+    if "next_state" not in st.session_state:
         st.session_state.next_state = False
         st.session_state.next_state_time = None
         st.session_state.next_state_TIMEOUT = 10
+
 
 # %%
 # --- Define variables --- #
 
 # Dropdown menu options
 maps = sorted({parts[0] for parts in empty_LFUT_df.index.astype(str).str.split("_")})
-gamemodes = sorted({parts[1] for parts in empty_LFUT_df.index.astype(str).str.split("_")})
+gamemodes = sorted(
+    {parts[1] for parts in empty_LFUT_df.index.astype(str).str.split("_")}
+)
 
 # FU table icons
-state_map = {
-        True: "✅",
-        False: "⬜",
-        "Mixed": "➖"
-    }
+state_map = {True: "✅", False: "⬜", "Mixed": "➖"}
 reverse_state_map = {v: k for k, v in state_map.items()}
 
 # %%
 # --- Define page building functions --- #
 
+
+def is_debug() -> bool:
+    return os.getenv("DEBUG", "false") == "true"
+
+
 # Does something (i think? EDIT: Leon told me it does)
 def on_page_load():
-    if st.session_state.back_state and time.time() - st.session_state.back_state_time > st.session_state.back_state_TIMEOUT:
+    if (
+        st.session_state.back_state
+        and time.time() - st.session_state.back_state_time
+        > st.session_state.back_state_TIMEOUT
+    ):
         st.session_state.back_state = False
 
+
 # TODO clean up function and place explainers
-def build_bottom_nav(current_page_fn, middle_bool: bool = True,
-                     df: pd.DataFrame = None,
-                     table_1_df: pd.DataFrame = None,
-                     table_2_df: pd.DataFrame = None,
-                     filter: str = None):
+def build_bottom_nav(
+    current_page_fn,
+    middle_bool: bool = True,
+    df: pd.DataFrame = None,
+    table_1_df: pd.DataFrame = None,
+    table_2_df: pd.DataFrame = None,
+    filter: str = None,
+):
     """
     Build a bottom navigation bar with Previous, Next, Reset, and Save buttons.
     Automatically determines previous/next pages from st.session_state.PAGE_ORDER.
@@ -77,7 +94,7 @@ def build_bottom_nav(current_page_fn, middle_bool: bool = True,
     next_page_name = next_page.__name__ if next_page else None
 
     prev_page_name = "pages/" + prev_page.__name__ + ".py" if prev_page else None
-    next_page_name = "pages/" + next_page.__name__ + ".py" if next_page else None    
+    next_page_name = "pages/" + next_page.__name__ + ".py" if next_page else None
 
     # LEFT: Previous page
     with left:
@@ -100,28 +117,37 @@ def build_bottom_nav(current_page_fn, middle_bool: bool = True,
     # MIDDLE: Reset / Save
     if middle_bool:
         with middle:
-            with st.container(horizontal_alignment='center'):
+            with st.container(horizontal_alignment="center"):
                 ml, mr = st.columns(2)
                 with ml:
-                    with st.container(horizontal_alignment='right'):
-                        if st.button("🔄 Reset changes", help="Not functional"): #TODO
+                    with st.container(horizontal_alignment="right"):
+                        if st.button("🔄 Reset changes", help="Not functional"):  # TODO
                             st.session_state.back_state = False
                             st.session_state.next_state = False
                             st.session_state.page_saved = True
                             st.rerun()
                 with mr:
                     if st.button("💾 Save Changes"):
+                        updated_df = None
+
                         # Apply FU table updates if provided
                         if table_1_df is not None and table_2_df is not None:
-                            st.session_state.new_df = futu.table_to_LFUT(df, table_1_df, table_2_df, filter)
-                        if df is not None:
-                            st.session_state.df.loc[df.index, df.columns] = st.session_state.new_df
+                            updated_df = futu.table_to_LFUT(
+                                df.copy(), table_1_df, table_2_df, filter
+                            )
+                        elif df is not None:
+                            updated_df = df.copy()
+
+                        if updated_df is not None:
+                            st.session_state.df.loc[
+                                updated_df.index, updated_df.columns
+                            ] = updated_df
                         st.session_state.page_saved = True
                         st.success("Changes saved!")
 
     # RIGHT: Next page
     with right:
-        with st.container(horizontal_alignment='right'):
+        with st.container(horizontal_alignment="right"):
             if next_page and st.button("Next ➡️"):
                 st.session_state.back_state = False
                 st.session_state.next_state = True
@@ -138,11 +164,19 @@ def build_bottom_nav(current_page_fn, middle_bool: bool = True,
                     st.session_state.next_state = False
                     st.switch_page(st.Page(next_page_name))
 
+    if is_debug():
+        # Display a readonly dataframe view of only the changes from an empty to the current state
+        # Useful for debugging weird change behavior between pages
+        st.subheader("DEBUG")
+        st.write("Dataframe diff view")
+        st.write(empty_LFUT_df.compare(st.session_state.df))
+
     return bottom_nav_container
+
 
 # Very comlicated function that needs to be cleaned up at some point #TODO
 # def build_bottom_nav(prev_page = None, next_page = None, middle_bool:bool = True, df:pd.DataFrame = None, table_1_df:pd.DataFrame = None, table_2_df:pd.DataFrame = None, filter:str = None):
-    
+
 #     bottom_nav_containter = st.container()
 #     left, middle, right = bottom_nav_containter.columns(3)
 
@@ -152,7 +186,7 @@ def build_bottom_nav(current_page_fn, middle_bool: bool = True,
 #             st.session_state.back_state = True
 #             st.session_state.back_state_time = time.time()
 #         if st.session_state.back_state:
-#             if not st.session_state.page_saved: 
+#             if not st.session_state.page_saved:
 #                 st.warning("You may have unsaved changes!")
 #                 if st.button("Discard changes", key="back_anyways"):
 #                     st.session_state.back_state = False
@@ -181,7 +215,7 @@ def build_bottom_nav(current_page_fn, middle_bool: bool = True,
 #                         st.session_state.page_saved = True
 #                         st.success("Changes saved!")
 #                         # st.session_state.df = df
-    
+
 #     with right:
 #         with st.container(horizontal_alignment='right'):
 #             if next_page is not None and st.button('Next page'):
@@ -189,7 +223,7 @@ def build_bottom_nav(current_page_fn, middle_bool: bool = True,
 #                 st.session_state.next_state = True
 #                 st.session_state.next_state_time = time.time()
 #             if st.session_state.next_state:
-#                 if not st.session_state.page_saved: 
+#                 if not st.session_state.page_saved:
 #                     st.warning("You may have unsaved changes!")
 #                     if st.button("Discard changes", key="next_anyways"):
 #                         st.session_state.next_state = False
@@ -203,8 +237,11 @@ def build_bottom_nav(current_page_fn, middle_bool: bool = True,
 # %%
 # --- Define LFUT table building functions --- #
 
-# Layer filter function
-def apply_filters(df:pd.DataFrame, filter_input:str, filter_mode:str, axis:str = "rows"):
+
+def apply_filters(
+    df: pd.DataFrame, filter_input: str, filter_mode: str, axis: str = "rows"
+):
+    """Layer filter function"""
 
     # Check if there is a filter to apply
     if not filter_input.strip():
@@ -238,15 +275,17 @@ def apply_filters(df:pd.DataFrame, filter_input:str, filter_mode:str, axis:str =
     else:
         return df.loc[:, mask.values]
 
+
 # %%
 # --- Define FU table building functions --- #
 
-# Explainer for FU tables
-def FU_explainer(filter:str = ""):
+
+def FU_explainer(filter: str = ""):
+    """Explainer for FU tables"""
 
     if filter != "":
-        filter = " "+filter
-    
+        filter = " " + filter
+
     with st.expander("ℹ️ How global exclusions work"):
         st.markdown(
             f"""
@@ -266,22 +305,29 @@ def FU_explainer(filter:str = ""):
             """
         )
 
-# Replaces df cell values according to state_map dictionary
-def state_maping(df:pd.DataFrame, state_map:dict):
+
+def state_maping(df: pd.DataFrame, state_map: dict):
+    """Replaces df cell values according to state_map dictionary"""
 
     df = df.replace(state_map)
     df = df.infer_objects(copy=False)
 
     return df
 
-# Creates column config settings for FU tables
-def select_box_FU(df:pd.DataFrame, state_map:dict):
+
+def select_box_FU(df: pd.DataFrame, state_map: dict):
+    """Creates column config settings for FU tables"""
 
     df = state_maping(df, state_map)
 
     select_options = list(state_map.values())
 
     column_config = {0: st.column_config.Column(disabled=True)}
-    column_config.update({col: st.column_config.SelectboxColumn(options=select_options) for col in df.columns})
+    column_config.update(
+        {
+            col: st.column_config.SelectboxColumn(options=select_options)
+            for col in df.columns
+        }
+    )
 
     return column_config

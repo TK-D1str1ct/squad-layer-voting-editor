@@ -19,22 +19,24 @@ import FUT_Utils as futu
 empty_LFUT_df = pd.read_csv("LFUT.csv", index_col=0)
 
 
-def init_session():
-    if "df" not in st.session_state:
-        st.session_state.df = empty_LFUT_df.copy()
+def init_session(session_state=st.session_state):
+    if "df" not in session_state:
+        session_state.df = empty_LFUT_df.copy()
 
-    if "page_saved" not in st.session_state:
-        st.session_state.page_saved = True
+    if "page_saved" not in session_state:
+        session_state.page_saved = True
 
-    if "back_state" not in st.session_state:
-        st.session_state.back_state = False
-        st.session_state.back_state_time = None
-        st.session_state.back_state_TIMEOUT = 10
+    if "back_state" not in session_state:
+        session_state.back_state = False
+        session_state.back_state_time = None
+        session_state.back_state_TIMEOUT = 10
 
-    if "next_state" not in st.session_state:
-        st.session_state.next_state = False
-        st.session_state.next_state_time = None
-        st.session_state.next_state_TIMEOUT = 10
+    if "next_state" not in session_state:
+        session_state.next_state = False
+        session_state.next_state_time = None
+        session_state.next_state_TIMEOUT = 10
+
+    return session_state
 
 
 # %%

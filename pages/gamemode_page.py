@@ -4,6 +4,7 @@ import FUT_Utils as futu
 
 
 def gamemode_page():
+
     au.on_page_load()
 
     st.title("🎮 Gamemode Exclusion Settings")

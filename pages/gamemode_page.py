@@ -20,7 +20,7 @@ def gamemode_page():
     au.FU_explainer(selected_gamemode)
 
     team1_df, team2_df = futu.LFUT_to_table(
-        st.session_state.df, filter=st.session_state.gamemode_filter
+        st.session_state.df, filter=f"_{st.session_state.gamemode_filter}_"
     )
 
     st.header("Team 1")
@@ -44,5 +44,5 @@ def gamemode_page():
         df=st.session_state.df,
         table_1_df=au.state_maping(team_1_table, au.reverse_state_map),
         table_2_df=au.state_maping(team_2_table, au.reverse_state_map),
-        filter=st.session_state.gamemode_filter,
-    )  # TODO gamemode filter for AAS also applies changes to RAAS
+        filter=f"_{st.session_state.gamemode_filter}_",
+    )

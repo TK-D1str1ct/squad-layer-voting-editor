@@ -16,7 +16,7 @@ def map_page():
     au.FU_explainer(selected_map)
 
     team1_df, team2_df = futu.LFUT_to_table(
-        st.session_state.df, filter=st.session_state.map_filter
+        st.session_state.df, filter=f"{st.session_state.map_filter}_"
     )
 
     st.header("Team 1")
@@ -40,5 +40,5 @@ def map_page():
         df=st.session_state.df,
         table_1_df=au.state_maping(team_1_table, au.reverse_state_map),
         table_2_df=au.state_maping(team_2_table, au.reverse_state_map),
-        filter=st.session_state.map_filter,
+        filter=f"{st.session_state.map_filter}_",
     )

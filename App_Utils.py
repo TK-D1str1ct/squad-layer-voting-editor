@@ -306,7 +306,7 @@ def FU_explainer(filter: str = ""):
         )
 
 
-def state_maping(df: pd.DataFrame, state_map: dict):
+def state_mapping(df: pd.DataFrame, state_map: dict):
     """Replaces df cell values according to state_map dictionary"""
 
     df = df.replace(state_map)
@@ -318,7 +318,7 @@ def state_maping(df: pd.DataFrame, state_map: dict):
 def select_box_FU(df: pd.DataFrame, state_map: dict):
     """Creates column config settings for FU tables"""
 
-    df = state_maping(df, state_map)
+    df = state_mapping(df, state_map)
 
     select_options = list(state_map.values())
 

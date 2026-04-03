@@ -78,7 +78,7 @@ def layer_page():
     # --- Editable table ---
     edited_df = st.data_editor(
         df_filtered,
-        key="editor",
+        key=au.register_key_for_reset("editor"),
         column_config=config,
         width="stretch",
         on_change=lambda: st.session_state.__setitem__("page_saved", False),

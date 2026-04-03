@@ -20,7 +20,7 @@ def global_page():
     team_1_table = st.data_editor(
         au.state_mapping(team1_df, au.state_map),
         column_config=au.select_box_FU(team1_df, au.state_map),
-        key="team1_editor",
+        key=au.register_key_for_reset("team1_editor"),
         on_change=lambda: st.session_state.__setitem__("page_saved", False),
     )
 
@@ -28,7 +28,7 @@ def global_page():
     team_2_table = st.data_editor(
         au.state_mapping(team2_df, au.state_map),
         column_config=au.select_box_FU(team2_df, au.state_map),
-        key="team2_editor",
+        key=au.register_key_for_reset("team2_editor"),
         on_change=lambda: st.session_state.__setitem__("page_saved", False),
     )
 

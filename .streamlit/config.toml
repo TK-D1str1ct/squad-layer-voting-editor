@@ -3,3 +3,6 @@ gatherUsageStats = false
 
 [logger]
 level = "info"
+
+[server]
+port = 12008

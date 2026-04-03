@@ -44,4 +44,4 @@ tasks:
       - rm -rf dist
       - mkdir -p dist
       - task: export_requirements
-      - tar --exclude='pages/__pycache__' -czf {{.ARCHIVE_PATH}} pyproject.toml uv.lock app.py App_Utils.py FUT_Utils.py Import_Config_Settings.py Export_Config_Settings.py LFUT.csv pages requirements.txt LICENSE
+      - tar --exclude='pages/__pycache__' -czf {{.ARCHIVE_PATH}} pyproject.toml uv.lock app.py App_Utils.py FUT_Utils.py Import_Config_Settings.py Export_Config_Settings.py LFUT.csv pages requirements.txt LICENSE .streamlit/config.toml

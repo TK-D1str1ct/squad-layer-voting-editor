@@ -168,8 +168,11 @@ def build_bottom_nav(
         # Display a readonly dataframe view of only the changes from an empty to the current state
         # Useful for debugging weird change behavior between pages
         st.subheader("DEBUG")
-        st.write("Dataframe diff view")
-        st.write(empty_LFUT_df.compare(st.session_state.df))
+        with st.expander("Dataframe diff view"):
+            st.write(empty_LFUT_df.compare(st.session_state.df))
+
+        with st.expander("Session state"):
+            st.write(st.session_state)
 
     return bottom_nav_container
 

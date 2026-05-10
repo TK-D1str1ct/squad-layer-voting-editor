@@ -4,24 +4,44 @@ version: '3'
 
 tasks:
   start:
+    desc: Run the server for local development
     cmds:
       - uv run streamlit run app.py {{.CLI_ARGS}}
   start:debug:
+    desc: Run server in debug mode
     cmds:
       - uv run streamlit run app.py {{.CLI_ARGS}}
     env:
       DEBUG: true
   lint:
+    desc: Lint project
     cmds:
       - uv run ruff check
   format:
+    desc: Format project
     cmds:
       - uv run ruff format
   lfut:fetch:
+    desc: Retrieve the latest layers.json file from fantinodavide Github
     cmds:
       - curl -L https://raw.githubusercontent.com/fantinodavide/SquadLayerList/main/layers.json -o layers_upstream.json
       - rm layers.json
       - mv layers_upstream.json layers.json
   lfut:update:
+    desc: Regenerate LFUT.csv file from current layers.json file
     cmds:
       - uv run LFUT_from_json.py
+  export_requirements:
+    desc: Generate a requirements.txt file from the uv.lock for pip compatibility 
+    cmds:
+      - uv export --no-hashes --no-dev -o requirements.txt &> /dev/null
+  package:
+    desc: Create a tarball with only the files needed to run the Streamlit server
+    vars:
+      ARCHIVE_NAME: '{{default "squad-layer-voting-editor.tar.gz" .ARCHIVE_NAME}}'
+      ARCHIVE_PATH: 'dist/{{.ARCHIVE_NAME}}'
+    cmds:
+      - rm -rf dist
+      - mkdir -p dist
+      - task: export_requirements
+      - tar --exclude='pages/__pycache__' -czf {{.ARCHIVE_PATH}} pyproject.toml uv.lock app.py App_Utils.py FUT_Utils.py Import_Config_Settings.py Export_Config_Settings.py LFUT.csv pages requirements.txt LICENSE .streamlit/config.toml

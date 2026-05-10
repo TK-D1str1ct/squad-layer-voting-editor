@@ -35,3 +35,8 @@ uv run streamlit run app.py
 ```
 
 A Taskfile.yml with common local tasks is also included.  See <https://taskfile.dev/> for documentation on installation/usage.
+
+## Known Issues
+
+- [ ] State seems to be polluted across user sessions
+- [ ] Filters for AAS and RAAS overlap

@@ -36,6 +36,12 @@ def init_session():
         st.session_state.next_state_time = None
         st.session_state.next_state_TIMEOUT = 10
 
+    if "reset_counter" not in st.session_state:
+        st.session_state.reset_counter = 0
+
+    if "reset_keys" not in st.session_state:
+        st.session_state.reset_keys = set()
+
 
 # %%
 # --- Define variables --- #
@@ -66,6 +72,42 @@ def on_page_load():
         > st.session_state.back_state_TIMEOUT
     ):
         st.session_state.back_state = False
+
+
+def register_key_for_reset(keyname: str) -> str:
+    """Return a reset-aware widget key and register it for reset cleanup."""
+    resettable_key = f"{keyname}_{st.session_state.reset_counter}"
+    st.session_state.reset_keys.add(resettable_key)
+
+    return resettable_key
+
+
+def reset_changes():
+    """Clear unsaved widget state for the current page and rerun.
+
+    Streamlit widgets preserve local state by key, so editable widgets such as
+    `st.data_editor` will keep unsaved changes unless their session entries
+    are explicitly removed. Reset flow is:
+
+    1. increment `reset_counter` so reset-aware widgets get fresh keys
+    2. remove tracked widget keys from `st.session_state`
+    3. rerun the page so widgets reload from the saved dataframe/session source
+
+    Any widget that should participate in this flow must use
+    `key=register_key_for_reset("original_key_name")`.
+    """
+    st.session_state.back_state = False
+    st.session_state.next_state = False
+    st.session_state.page_saved = True
+
+    # This line will cycle the counter between 0 and 1
+    st.session_state.reset_counter = (st.session_state.reset_counter + 1) % 2
+
+    for key in st.session_state.reset_keys:
+        st.session_state.pop(key, None)
+
+    st.session_state.reset_keys = set()
+    st.rerun()
 
 
 # TODO clean up function and place explainers
@@ -121,11 +163,8 @@ def build_bottom_nav(
                 ml, mr = st.columns(2)
                 with ml:
                     with st.container(horizontal_alignment="right"):
-                        if st.button("🔄 Reset changes", help="Not functional"):  # TODO
-                            st.session_state.back_state = False
-                            st.session_state.next_state = False
-                            st.session_state.page_saved = True
-                            st.rerun()
+                        if st.button("🔄 Reset changes"):
+                            reset_changes()
                 with mr:
                     if st.button("💾 Save Changes"):
                         updated_df = None
@@ -168,8 +207,11 @@ def build_bottom_nav(
         # Display a readonly dataframe view of only the changes from an empty to the current state
         # Useful for debugging weird change behavior between pages
         st.subheader("DEBUG")
-        st.write("Dataframe diff view")
-        st.write(empty_LFUT_df.compare(st.session_state.df))
+        with st.expander("Dataframe diff view"):
+            st.write(empty_LFUT_df.compare(st.session_state.df))
+
+        with st.expander("Session state"):
+            st.write(st.session_state)
 
     return bottom_nav_container
 
@@ -306,7 +348,7 @@ def FU_explainer(filter: str = ""):
         )
 
 
-def state_maping(df: pd.DataFrame, state_map: dict):
+def state_mapping(df: pd.DataFrame, state_map: dict):
     """Replaces df cell values according to state_map dictionary"""
 
     df = df.replace(state_map)
@@ -318,7 +360,7 @@ def state_maping(df: pd.DataFrame, state_map: dict):
 def select_box_FU(df: pd.DataFrame, state_map: dict):
     """Creates column config settings for FU tables"""
 
-    df = state_maping(df, state_map)
+    df = state_mapping(df, state_map)
 
     select_options = list(state_map.values())
 
